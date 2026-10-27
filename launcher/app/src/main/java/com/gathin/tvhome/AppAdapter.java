@@ -310,18 +310,12 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
         }
         int sortMode = ctx.getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE)
-                .getInt(LauncherSettingsActivity.APP_SORT_KEY, LauncherSettingsActivity.SORT_CUSTOM);
+                .getInt(LauncherSettingsActivity.APP_SORT_KEY, LauncherSettingsActivity.SORT_ACTIVITY);
         Collections.sort(fresh, (a, b) -> {
-            // Cards come right after the configured dock apps, before the grid.
             boolean ca = a.kind == Entry.CARD, cb = b.kind == Entry.CARD;
             if (ca != cb) return ca ? -1 : 1;
 
             if (sortMode == LauncherSettingsActivity.SORT_ALPHABETICAL) {
-                return a.label.compareToIgnoreCase(b.label);
-            } else if (sortMode == LauncherSettingsActivity.SORT_ACTIVITY) {
-                long ta = LastOpened.get(ctx, a.pkg);
-                long tb = LastOpened.get(ctx, b.pkg);
-                if (ta != tb) return Long.compare(tb, ta);
                 return a.label.compareToIgnoreCase(b.label);
             } else if (sortMode == LauncherSettingsActivity.SORT_RECENTS) {
                 long ta = getInstallTime(pm, a.pkg);
@@ -330,9 +324,10 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return a.label.compareToIgnoreCase(b.label);
             }
 
-            // Default: SORT_CUSTOM (The owner's own saved placement first)
-            int saved = Order.compare(savedRanks, a.component.flattenToShortString(), b.component.flattenToShortString());
-            if (saved != 0) return saved;
+            // Default: SORT_ACTIVITY (Usage-based reordering: most recently used apps first!)
+            long ta = LastOpened.get(ctx, a.pkg);
+            long tb = LastOpened.get(ctx, b.pkg);
+            if (ta != tb) return Long.compare(tb, ta);
             int fa = favourites.indexOf(a.pkg), fb = favourites.indexOf(b.pkg);
             if (fa >= 0 || fb >= 0) {
                 if (fa < 0) return 1;
@@ -349,7 +344,11 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     ctx.getDrawable(R.drawable.ic_home_settings), null, 0));
         }
         docked = 0;
-        while (docked < fresh.size() && isDocked(fresh.get(docked))) docked++;
+        if (sortMode == LauncherSettingsActivity.SORT_ACTIVITY) {
+            docked = Math.min(fresh.size(), dockSize);
+        } else {
+            while (docked < fresh.size() && isDocked(fresh.get(docked))) docked++;
+        }
         emptySlots = dockRow && !reordering ? DockSlots.empty(docked, dockSize, fresh.size(), fillDock) : 0;
         for (int i = 0; i < emptySlots; i++) {
             fresh.add(docked + i, new Entry(Entry.EMPTY, "", new ComponentName(ctx, "empty-dock-slot-" + i),
@@ -561,7 +560,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         try {
             ctx.startActivity(i);
             AppSwitcher.recordAppLaunch(ctx, e.pkg);
-            if (cinematic) LastOpened.record(ctx, e.pkg);
+            LastOpened.record(ctx, e.pkg);
             if (advancedEffects && !reducedMotion && ctx instanceof Activity) {
                 ((Activity) ctx).overridePendingTransition(R.anim.app_open_enter, R.anim.app_open_exit);
             }

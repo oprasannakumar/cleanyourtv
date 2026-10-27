@@ -28,10 +28,9 @@ public final class LauncherSettingsActivity extends Activity {
 
     static final String EXTRA_REORDER = "com.gathin.tvhome.extra.REORDER_FROM_SETTINGS";
     public static final String APP_SORT_KEY = "app_sort_mode";
-    public static final int SORT_CUSTOM = 0;
+    public static final int SORT_ACTIVITY = 0;
     public static final int SORT_ALPHABETICAL = 1;
-    public static final int SORT_ACTIVITY = 2;
-    public static final int SORT_RECENTS = 3;
+    public static final int SORT_RECENTS = 2;
 
     private SharedPreferences choices;
     private final TextView[] columnChoices = new TextView[4];
@@ -56,12 +55,6 @@ public final class LauncherSettingsActivity extends Activity {
         setContentView(R.layout.activity_launcher_settings);
         choices = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
         Config config = Config.load(this);
-        View reorderChoice = findViewById(R.id.reorderChoice);
-        reorderChoice.setVisibility(View.VISIBLE);
-        reorderChoice.setOnClickListener(v -> {
-            setResult(RESULT_OK, new Intent().putExtra(EXTRA_REORDER, true));
-            finish();
-        });
         sortChoice = findViewById(R.id.sortChoice);
         sortChoice.setOnClickListener(v -> showSortPicker());
         columns = config.columns;
@@ -166,8 +159,7 @@ public final class LauncherSettingsActivity extends Activity {
         findViewById(R.id.tvSettingsChoice).setOnClickListener(v ->
                 open(SystemSettings.intent(this, Settings.ACTION_SETTINGS)));
         refresh();
-        if (config.launcherSettingsButton) reorderChoice.requestFocus();
-        else columnChoices[Math.max(0, Math.min(columns - 4, 3))].requestFocus();
+        sortChoice.requestFocus();
     }
 
     private void reverseRow(TextView[] views) {
@@ -250,12 +242,11 @@ public final class LauncherSettingsActivity extends Activity {
 
     private void showSortPicker() {
         String[] options = {
-                "Custom placement (manual)",
+                "Usage-based (Most active apps first)",
                 "Alphabetical (A - Z)",
-                "Most active (recently used)",
                 "Recently installed"
         };
-        int current = choices.getInt(APP_SORT_KEY, SORT_CUSTOM);
+        int current = choices.getInt(APP_SORT_KEY, SORT_ACTIVITY);
         new AlertDialog.Builder(this)
                 .setTitle("App sorting")
                 .setSingleChoiceItems(options, current, (dialog, which) -> {
@@ -327,13 +318,12 @@ public final class LauncherSettingsActivity extends Activity {
                         : wallpaperCurrent != null ? wallpaperCurrent
                         : getString(R.string.wallpaper_theme_default)));
         openOnStartChoice.setText(getString(R.string.open_on_start_state, openOnStartLabel()));
-        int sortMode = choices.getInt(APP_SORT_KEY, SORT_CUSTOM);
+        int sortMode = choices.getInt(APP_SORT_KEY, SORT_ACTIVITY);
         String sortLabel;
         switch (sortMode) {
             case SORT_ALPHABETICAL: sortLabel = "Alphabetical (A - Z)"; break;
-            case SORT_ACTIVITY: sortLabel = "Most active"; break;
             case SORT_RECENTS: sortLabel = "Recently installed"; break;
-            default: sortLabel = "Custom placement"; break;
+            default: sortLabel = "Usage-based (Most active)"; break;
         }
         sortChoice.setText("App sorting: " + sortLabel);
         followThemeChoice.setSelected(!hasOnTvChoices());
