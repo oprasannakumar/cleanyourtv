@@ -88,6 +88,12 @@ final class CalendarTicker {
         if (events.size() > 1) {
             handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
         }
+
+        // Standalone background sync: refresh directly from Google Calendar via Wi-Fi
+        CalendarSync.syncIfNeeded(context, () -> {
+            loadEvents();
+            updateDisplay();
+        });
     }
 
     void onMinuteTick() {
@@ -96,6 +102,12 @@ final class CalendarTicker {
             loadEvents();
             if (currentIndex >= events.size()) currentIndex = 0;
             updateDisplay();
+
+            // Daily rollover: trigger a live calendar sync
+            CalendarSync.syncNow(context, () -> {
+                loadEvents();
+                updateDisplay();
+            });
         }
     }
 
@@ -190,7 +202,15 @@ final class CalendarTicker {
     }
 
     private String readJsonString() {
-        // 1. Try external app storage pushed by sync script
+        // 1. Try internal synced storage
+        File internal = new File(context.getFilesDir(), "calendar_events.json");
+        if (internal.exists() && internal.length() > 0) {
+            try (InputStream in = new FileInputStream(internal)) {
+                return readStream(in);
+            } catch (Exception ignored) {}
+        }
+
+        // 2. Try external app storage
         File external = new File(context.getExternalFilesDir(null), "calendar_events.json");
         if (external.exists() && external.length() > 0) {
             try (InputStream in = new FileInputStream(external)) {
@@ -198,7 +218,7 @@ final class CalendarTicker {
             } catch (Exception ignored) {}
         }
 
-        // 2. Fallback to bundled asset
+        // 3. Fallback to bundled asset
         try (InputStream in = context.getAssets().open("calendar_events.json")) {
             return readStream(in);
         } catch (Exception e) {
