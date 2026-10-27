@@ -200,6 +200,28 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean shamsi;
     private WeatherUpdate weatherUpdate;
     private CalendarTicker calendarTicker;
+    private long lastHomePressTime = 0L;
+    private static final long DOUBLE_TAP_TIMEOUT_MS = 550L;
+    private static final long DOUBLE_TAP_MIN_INTERVAL_MS = 80L;
+
+    /**
+     * Checks if the Home button was double-tapped within DOUBLE_TAP_TIMEOUT_MS.
+     * If so, switches to the other recently used application (Alt-Tab on TV).
+     */
+    private boolean checkHomeDoubleTap() {
+        long now = android.os.SystemClock.uptimeMillis();
+        long diff = now - lastHomePressTime;
+        if (diff < DOUBLE_TAP_MIN_INTERVAL_MS) {
+            // Duplicate event from the same physical press (e.g. key event + onNewIntent delivery)
+            return false;
+        }
+        lastHomePressTime = now;
+        if (diff <= DOUBLE_TAP_TIMEOUT_MS) {
+            lastHomePressTime = 0L;
+            return AppSwitcher.switchApp(this);
+        }
+        return false;
+    }
     /** greeting_name: said after the greeting, which is shown in capitals. */
     private String greetingName = "";
     /** Optional time-of-day backdrop (config.xml, sky_intensity); 0 keeps it hidden. */
@@ -931,6 +953,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (openLauncherSettingsIfAsked(intent)) return;
         if (openInputsIfAsked(intent)) return;
         if (intent == null || !intent.hasCategory(Intent.CATEGORY_HOME)) return;
+        if (checkHomeDoubleTap()) return;
         grid.scrollToPosition(0);
         lastFocused = 0;
         lastFocusedKey = adapter.getItemCount() > 0 ? adapter.keyAt(0) : null;
@@ -1281,6 +1304,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && !event.isCanceled()) {
+            int keyCode = event.getKeyCode();
+            if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+                if (AppSwitcher.switchApp(this)) return true;
+            } else if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_ALL_APPS) {
+                if (checkHomeDoubleTap()) return true;
+            }
+        }
         // Vendor keys (TCL Netflix button, 4062) never reach the key services, only the focused window.
         if (event.getKeyCode() >= 1000 && RemoteKeys.handle(this, event, homeAppKeys.get(event.getKeyCode()), null)) return true;
         if (handleSettingsKey(event)) return true;
@@ -2947,6 +2978,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             startActivity(i);
+            String pkg = i.getPackage();
+            if (pkg == null && i.getComponent() != null) pkg = i.getComponent().getPackageName();
+            if (pkg != null) AppSwitcher.recordAppLaunch(this, pkg);
         } catch (ActivityNotFoundException | SecurityException e) {
             Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show();
         }

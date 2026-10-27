@@ -398,6 +398,7 @@ final class RemoteKeys {
         if (open == null) return;
         try {
             ctx.startActivity(open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            AppSwitcher.recordAppLaunch(ctx, pkg);
         } catch (ActivityNotFoundException ignored) {
         }
     }
