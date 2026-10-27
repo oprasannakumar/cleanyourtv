@@ -2687,6 +2687,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
             if (!online) {
                 text = getString(R.string.offline);
+                icon = R.drawable.ic_wifi_off;
                 vpn = false;
             } else if (ethernet) {
                 text = getString(R.string.ethernet);
@@ -2701,6 +2702,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 if (ssid != null) {
                     ssid = ssid.replace("\"", "").trim();
                     if (!ssid.isEmpty() && !ssid.contains("unknown") && !ssid.equals("0x")) text = ssid;
+                }
+                if (!validated) {
+                    icon = R.drawable.ic_wifi_no_internet;
+                } else {
+                    icon = R.drawable.ic_wifi;
                 }
             }
         } catch (Exception ignored) {
@@ -2737,7 +2743,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             btnWifi.setText(text);
         }
         if (wifiIconOnly) {
-            btnWifi.setContentDescription(btnWifi.getText());
+            String desc = text;
+            if (online && validated) {
+                desc = (text != null ? text : "Wi-Fi") + " (Internet Available)";
+            } else if (online && !validated) {
+                desc = (text != null ? text : "Wi-Fi") + " (Connected, No Internet)";
+            } else {
+                desc = "Wi-Fi: Disconnected (Offline)";
+            }
+            btnWifi.setContentDescription(desc);
             btnWifi.setText(null);
         }
         if (festive && diya != null) {
@@ -2749,10 +2763,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 wifiIcon = icon;
                 btnWifi.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
             }
-            ColorStateList tint = online ? wifiOnlineTint : wifiPlainTint;
-            // wifi_status_warnings: orange while connected but not validated (a captive portal), red while offline.
-            if (wifiNoInternetTint != null) tint = !online ? wifiOfflineTint : validated ? wifiOnlineTint : wifiNoInternetTint;
-            if (wifiOnlineTint != null && btnWifi.getCompoundDrawableTintList() != tint) {
+            ColorStateList tint = !online ? wifiOfflineTint : validated ? wifiOnlineTint : wifiNoInternetTint;
+            if (tint == null) tint = online ? wifiOnlineTint : wifiPlainTint;
+            if (tint != null && btnWifi.getCompoundDrawableTintList() != tint) {
                 btnWifi.setCompoundDrawableTintList(tint);
             }
         }

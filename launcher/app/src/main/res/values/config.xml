@@ -35,6 +35,7 @@
     <string-array name="hidden_apps">
         <item>com.mitv.livetv</item>
         <item>com.mitv.gallery</item>
+        <item>com.xiaomi.mitv.manualhelp</item>
     </string-array>
 
     <!-- The TV's Live TV / tuner app, offered at the end of the Inputs menu. Leave empty to omit. -->
@@ -292,7 +293,7 @@
     <bool name="dock_even_padding">false</bool>
     <!-- A reorder button (two arrows) in the top bar. Off by default: reordering is also in the Settings
          button's long-press menu, so it needs no extra button on screen. -->
-    <bool name="reorder_button">false</bool>
+    <bool name="reorder_button">true</bool>
     <!-- Wi-Fi and Settings as round icon-only buttons (the network name moves to the talkback description);
          Inputs keeps its label. -->
     <bool name="icon_only_buttons">true</bool>
@@ -301,11 +302,11 @@
     <!-- true colours the Wi-Fi pill's icon green while the TV is online and leaves it white while it is not (dark on
          the focused pill either way), so the connection shows at a glance, also as an icon-only button. Can also be
          set with "wifi_status_color": true in a theme's config.json. -->
-    <bool name="wifi_status_color">false</bool>
+    <bool name="wifi_status_color">true</bool>
     <!-- With wifi_status_color: the icon orange while the TV is connected but Android has not reached the internet
          through it (a hotel or holiday-park Wi-Fi waiting for its login page) and red while it is offline, instead
          of white for both. Can also be set with "wifi_status_warnings": true in a theme's config.json. -->
-    <bool name="wifi_status_warnings">false</bool>
+    <bool name="wifi_status_warnings">true</bool>
     <!-- The app library as a round button in the top bar, beside Settings (app_library must be on too). -->
     <bool name="library_button">false</bool>
     <!-- The App library pill after the last Home row. false hides it while library_button is on, so the top-bar
@@ -360,7 +361,7 @@
     <!-- Hold OK on a tile opens a small menu: Move (picks the tile up for reordering), Remove from Home (only with
          app_library) and App info. false keeps the old behaviour: holding OK opens the app's App info page.
          Can also be set with "tile_menu": true in a theme's config.json. -->
-    <bool name="tile_menu">false</bool>
+    <bool name="tile_menu">true</bool>
 
     <!-- Grid rows left visible under the dock on the home screen. 0 = dock sits at the very bottom. Tiles shrink if
          the dock, its title and this many rows would not otherwise fit the screen height. -->

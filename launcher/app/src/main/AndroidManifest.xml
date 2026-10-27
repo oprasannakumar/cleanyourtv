@@ -66,6 +66,7 @@
         <package android:name="com.xiaomi.mitv.settings" />
         <package android:name="com.xiaomi.mitv.mediaexplorer" />
         <package android:name="com.xiaomi.mitv.smartshare" />
+        <package android:name="com.xiaomi.mitv.tvmanager" />
         <package android:name="com.xiaomi.wfdsinkhelperservice" />
         <package android:name="org.videolan.vlc" />
         <package android:name="com.tcl.settings" />

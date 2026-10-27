@@ -27,11 +27,18 @@ public final class LauncherSettingsActivity extends Activity {
     }
 
     static final String EXTRA_REORDER = "com.gathin.tvhome.extra.REORDER_FROM_SETTINGS";
+    public static final String APP_SORT_KEY = "app_sort_mode";
+    public static final int SORT_CUSTOM = 0;
+    public static final int SORT_ALPHABETICAL = 1;
+    public static final int SORT_ACTIVITY = 2;
+    public static final int SORT_RECENTS = 3;
+
     private SharedPreferences choices;
     private final TextView[] columnChoices = new TextView[4];
     private final TextView[] rowChoices = new TextView[4];
     private static final int[] DOCK_OPACITIES = {100, 70, 50, 30};
     private final TextView[] dockChoices = new TextView[DOCK_OPACITIES.length];
+    private TextView sortChoice;
     private TextView wallpaperChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
@@ -50,11 +57,13 @@ public final class LauncherSettingsActivity extends Activity {
         choices = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
         Config config = Config.load(this);
         View reorderChoice = findViewById(R.id.reorderChoice);
-        reorderChoice.setVisibility(config.launcherSettingsButton ? View.VISIBLE : View.GONE);
+        reorderChoice.setVisibility(View.VISIBLE);
         reorderChoice.setOnClickListener(v -> {
             setResult(RESULT_OK, new Intent().putExtra(EXTRA_REORDER, true));
             finish();
         });
+        sortChoice = findViewById(R.id.sortChoice);
+        sortChoice.setOnClickListener(v -> showSortPicker());
         columns = config.columns;
         rowsBelowDock = config.rowsBelowDock;
         dockOpacity = config.dockOpacity;
@@ -140,7 +149,7 @@ public final class LauncherSettingsActivity extends Activity {
             if (!hasOnTvChoices()) return;
             choices.edit().remove("columns").remove(Config.ROWS_BELOW_DOCK_KEY).remove("animations")
                     .remove("advanced_effects").remove(Config.WALLPAPER_CHOICE_KEY)
-                    .remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY).commit();
+                    .remove(Config.DOCK_OPACITY_KEY).remove(OpenOnStart.KEY).remove(APP_SORT_KEY).commit();
             Config current = Config.load(this);
             columns = current.columns;
             rowsBelowDock = current.rowsBelowDock;
@@ -239,6 +248,26 @@ public final class LauncherSettingsActivity extends Activity {
                 .show();
     }
 
+    private void showSortPicker() {
+        String[] options = {
+                "Custom placement (manual)",
+                "Alphabetical (A - Z)",
+                "Most active (recently used)",
+                "Recently installed"
+        };
+        int current = choices.getInt(APP_SORT_KEY, SORT_CUSTOM);
+        new AlertDialog.Builder(this)
+                .setTitle("App sorting")
+                .setSingleChoiceItems(options, current, (dialog, which) -> {
+                    dialog.dismiss();
+                    choices.edit().putInt(APP_SORT_KEY, which).apply();
+                    changed();
+                    refresh();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
     /** The picked app's name, its package when it is gone, or Off. */
     private String openOnStartLabel() {
         String pkg = choices.getString(OpenOnStart.KEY, "");
@@ -298,6 +327,15 @@ public final class LauncherSettingsActivity extends Activity {
                         : wallpaperCurrent != null ? wallpaperCurrent
                         : getString(R.string.wallpaper_theme_default)));
         openOnStartChoice.setText(getString(R.string.open_on_start_state, openOnStartLabel()));
+        int sortMode = choices.getInt(APP_SORT_KEY, SORT_CUSTOM);
+        String sortLabel;
+        switch (sortMode) {
+            case SORT_ALPHABETICAL: sortLabel = "Alphabetical (A - Z)"; break;
+            case SORT_ACTIVITY: sortLabel = "Most active"; break;
+            case SORT_RECENTS: sortLabel = "Recently installed"; break;
+            default: sortLabel = "Custom placement"; break;
+        }
+        sortChoice.setText("App sorting: " + sortLabel);
         followThemeChoice.setSelected(!hasOnTvChoices());
     }
 
@@ -305,7 +343,7 @@ public final class LauncherSettingsActivity extends Activity {
         return choices.contains("columns") || choices.contains(Config.ROWS_BELOW_DOCK_KEY)
                 || choices.contains("animations") || choices.contains("advanced_effects")
                 || choices.contains(Config.WALLPAPER_CHOICE_KEY) || choices.contains(Config.DOCK_OPACITY_KEY)
-                || choices.contains(OpenOnStart.KEY);
+                || choices.contains(OpenOnStart.KEY) || choices.contains(APP_SORT_KEY);
     }
 
     private void open(Intent intent) {

@@ -309,8 +309,28 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 fresh.add(new Entry(label, component, banner, icon));
             }
         }
+        int sortMode = ctx.getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE)
+                .getInt(LauncherSettingsActivity.APP_SORT_KEY, LauncherSettingsActivity.SORT_CUSTOM);
         Collections.sort(fresh, (a, b) -> {
-            // The owner's own order first; tiles it does not know (new installs) follow by the rule below.
+            // Cards come right after the configured dock apps, before the grid.
+            boolean ca = a.kind == Entry.CARD, cb = b.kind == Entry.CARD;
+            if (ca != cb) return ca ? -1 : 1;
+
+            if (sortMode == LauncherSettingsActivity.SORT_ALPHABETICAL) {
+                return a.label.compareToIgnoreCase(b.label);
+            } else if (sortMode == LauncherSettingsActivity.SORT_ACTIVITY) {
+                long ta = LastOpened.get(ctx, a.pkg);
+                long tb = LastOpened.get(ctx, b.pkg);
+                if (ta != tb) return Long.compare(tb, ta);
+                return a.label.compareToIgnoreCase(b.label);
+            } else if (sortMode == LauncherSettingsActivity.SORT_RECENTS) {
+                long ta = getInstallTime(pm, a.pkg);
+                long tb = getInstallTime(pm, b.pkg);
+                if (ta != tb) return Long.compare(tb, ta);
+                return a.label.compareToIgnoreCase(b.label);
+            }
+
+            // Default: SORT_CUSTOM (The owner's own saved placement first)
             int saved = Order.compare(savedRanks, a.component.flattenToShortString(), b.component.flattenToShortString());
             if (saved != 0) return saved;
             int fa = favourites.indexOf(a.pkg), fb = favourites.indexOf(b.pkg);
@@ -319,9 +339,6 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (fb < 0) return -1;
                 return Integer.compare(fa, fb);
             }
-            // Cards come right after the configured dock apps, before the alphabetical grid.
-            boolean ca = a.kind == Entry.CARD, cb = b.kind == Entry.CARD;
-            if (ca != cb) return ca ? -1 : 1;
             return a.label.compareToIgnoreCase(b.label);
         });
         // Retain the optional Default-home tile until dependent tile-ordering work is merged.
@@ -972,6 +989,14 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     listener.onTileFocused(pos, view);
                 }
             });
+        }
+    }
+
+    private static long getInstallTime(PackageManager pm, String pkg) {
+        try {
+            return pm.getPackageInfo(pkg, 0).firstInstallTime;
+        } catch (Exception e) {
+            return 0L;
         }
     }
 }
