@@ -198,6 +198,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** config.xml inputs_connected_only: the Inputs menu lists only connected inputs, the rest behind "More inputs". */
     private boolean inputsConnectedOnly;
     private boolean shamsi;
+    private WeatherUpdate weatherUpdate;
     /** greeting_name: said after the greeting, which is shown in capitals. */
     private String greetingName = "";
     /** Optional time-of-day backdrop (config.xml, sky_intensity); 0 keeps it hidden. */
@@ -379,6 +380,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (festive) updateWifiLabel();
             sky.update();
             wallpaperPlayer.update();
+            if (weatherUpdate != null) weatherUpdate.onMinuteTick();
             handler.postDelayed(this, MINUTE_MS);
         }
     };
@@ -511,6 +513,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             date.setTextSize(11f);
             lunarDate.setTextSize(11f);
             date.setPadding(0, (int) (4 * density), 0, 0);
+        }
+        View weatherRow = findViewById(R.id.weatherRow);
+        ImageView weatherIcon = findViewById(R.id.weatherIcon);
+        TextView weather = findViewById(R.id.weather);
+        if (weatherRow != null && getResources().getBoolean(R.bool.show_weather)) {
+            weatherUpdate = new WeatherUpdate(this, weatherRow, weatherIcon, weather);
+            weatherUpdate.initAndRefresh();
         }
         vpnApp = cfg.vpnApp;
         vpnPill = cfg.vpnPill && !cfg.topMenu;
@@ -974,6 +983,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (openLiveTvAfterBoot()) return;
         updateGreeting();
         updateRace();
+        if (weatherUpdate != null) weatherUpdate.initAndRefresh();
         // The network and Inputs pills keep their state while Home is in the background, and callbacks update them
         // when the network or the inputs change, so this refresh only catches anything missed. Its binder calls
         // (about 7 ms on a TCL C755, most of it WifiManager.getConnectionInfo) would hold up the first frame back
@@ -1216,6 +1226,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (weatherUpdate != null) weatherUpdate.destroy();
         unregisterReceiver(packageReceiver);
         wallpaperPlayer.close();
         ConnectivityManager cm = getSystemService(ConnectivityManager.class);
@@ -3176,6 +3187,22 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             final Intent liveTvIntent = liveTv;
             addInputRow(rows, popup, R.drawable.ic_livetv, getString(R.string.live_tv), -1, () -> open(liveTvIntent));
         }
+
+        Intent usbExplorer = getPackageManager().getLeanbackLaunchIntentForPackage("com.xiaomi.mitv.mediaexplorer");
+        if (usbExplorer == null) {
+            usbExplorer = getPackageManager().getLaunchIntentForPackage("com.xiaomi.mitv.mediaexplorer");
+        }
+        if (usbExplorer == null) {
+            usbExplorer = getPackageManager().getLeanbackLaunchIntentForPackage("org.videolan.vlc");
+        }
+        if (usbExplorer == null) {
+            usbExplorer = getPackageManager().getLaunchIntentForPackage("org.videolan.vlc");
+        }
+        if (usbExplorer != null) {
+            if (rows.getChildCount() > 0 && liveTv == null) addSeparator(rows);
+            final Intent finalUsbIntent = usbExplorer;
+            addInputRow(rows, popup, R.drawable.ic_usb, getString(R.string.usb_drive), -1, () -> open(finalUsbIntent));
+        }
         if (rows.getChildCount() == 0) {
             Toast.makeText(this, R.string.no_inputs, Toast.LENGTH_SHORT).show();
             return;
@@ -3253,6 +3280,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         row.setOnClickListener(v -> {
             popup.dismiss();
             action.run();
+        });
+        row.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && event.getAction() == KeyEvent.ACTION_DOWN) {
+                popup.dismiss();
+                View wifi = findViewById(R.id.btnWifi);
+                if (wifi != null && wifi.getVisibility() == View.VISIBLE) {
+                    wifi.requestFocus();
+                }
+                return true;
+            }
+            return false;
         });
         rows.addView(row);
         return row;
