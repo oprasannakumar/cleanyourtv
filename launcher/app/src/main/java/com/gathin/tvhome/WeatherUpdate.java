@@ -26,9 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 final class WeatherUpdate {
     private static final String TAG = "WeatherUpdate";
-    private static final String PREFS = "tvhome_weather_v4";
+    private static final String PREFS = "tvhome_weather_v5";
     private static final String KEY_TEXT = "cached_text";
-    private static final String KEY_ICON = "cached_icon";
+    private static final String KEY_ICON_NAME = "cached_icon_name";
     private static final String KEY_TIME = "cached_time";
     private static final long UPDATE_INTERVAL_MS = 30 * 60 * 1000L; // 30 minutes
 
@@ -42,11 +42,11 @@ final class WeatherUpdate {
 
     private static class WeatherResult {
         final String text;
-        final int iconRes;
+        final String iconName;
 
-        WeatherResult(String text, int iconRes) {
+        WeatherResult(String text, String iconName) {
             this.text = text;
-            this.iconRes = iconRes;
+            this.iconName = iconName;
         }
     }
 
@@ -57,20 +57,34 @@ final class WeatherUpdate {
         this.weatherView = weatherView;
     }
 
+    static int getIconRes(String iconName) {
+        if ("sunny".equals(iconName)) return R.drawable.ic_weather_sunny;
+        if ("clear_night".equals(iconName)) return R.drawable.ic_weather_clear_night;
+        if ("partly_cloudy_day".equals(iconName)) return R.drawable.ic_weather_partly_cloudy_day;
+        if ("partly_cloudy_night".equals(iconName)) return R.drawable.ic_weather_partly_cloudy_night;
+        if ("cloudy".equals(iconName)) return R.drawable.ic_weather_cloudy;
+        if ("fog".equals(iconName)) return R.drawable.ic_weather_fog;
+        if ("rainy".equals(iconName)) return R.drawable.ic_weather_rainy;
+        if ("snow".equals(iconName)) return R.drawable.ic_weather_snow;
+        if ("thunderstorm".equals(iconName)) return R.drawable.ic_weather_thunderstorm;
+        if ("hot".equals(iconName)) return R.drawable.ic_weather_hot;
+        return R.drawable.ic_weather_cloudy;
+    }
+
     void initAndRefresh() {
         if (weatherRow == null || weatherView == null) return;
 
         SharedPreferences sp = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         String cached = sp.getString(KEY_TEXT, null);
-        int cachedIcon = sp.getInt(KEY_ICON, 0);
+        String cachedIconName = sp.getString(KEY_ICON_NAME, null);
         String configCity = context.getString(R.string.weather_city);
         boolean cityMismatch = !TextUtils.isEmpty(configCity) && cached != null
                 && !cached.toLowerCase(Locale.ROOT).contains(configCity.toLowerCase(Locale.ROOT));
 
-        if (!TextUtils.isEmpty(cached) && !cityMismatch && cachedIcon != 0) {
+        if (!TextUtils.isEmpty(cached) && !cityMismatch && !TextUtils.isEmpty(cachedIconName)) {
             weatherView.setText(cached);
             if (weatherIcon != null) {
-                weatherIcon.setImageResource(cachedIcon);
+                weatherIcon.setImageResource(getIconRes(cachedIconName));
                 weatherIcon.setVisibility(View.VISIBLE);
             }
             weatherRow.setVisibility(View.VISIBLE);
@@ -78,7 +92,7 @@ final class WeatherUpdate {
 
         long lastTime = sp.getLong(KEY_TIME, 0);
         long now = System.currentTimeMillis();
-        if (now - lastTime >= UPDATE_INTERVAL_MS || TextUtils.isEmpty(cached) || cityMismatch || cachedIcon == 0) {
+        if (now - lastTime >= UPDATE_INTERVAL_MS || TextUtils.isEmpty(cached) || cityMismatch || TextUtils.isEmpty(cachedIconName)) {
             fetchAsync();
         }
     }
@@ -106,15 +120,15 @@ final class WeatherUpdate {
                     context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
                             .edit()
                             .putString(KEY_TEXT, result.text)
-                            .putInt(KEY_ICON, result.iconRes)
+                            .putString(KEY_ICON_NAME, result.iconName)
                             .putLong(KEY_TIME, System.currentTimeMillis())
                             .apply();
 
                     mainHandler.post(() -> {
                         if (weatherView != null && weatherRow != null) {
                             weatherView.setText(result.text);
-                            if (weatherIcon != null && result.iconRes != 0) {
-                                weatherIcon.setImageResource(result.iconRes);
+                            if (weatherIcon != null && !TextUtils.isEmpty(result.iconName)) {
+                                weatherIcon.setImageResource(getIconRes(result.iconName));
                                 weatherIcon.setVisibility(View.VISIBLE);
                             }
                             weatherRow.setVisibility(View.VISIBLE);
@@ -171,7 +185,6 @@ final class WeatherUpdate {
 
         // Automatic IP location if no explicit city or geocoding failed
         if (Double.isNaN(lat) || Double.isNaN(lon)) {
-            // Try https://ipwho.is/ (accurate on IPv6)
             try {
                 JSONObject ipwho = fetchJson("https://ipwho.is/");
                 if (ipwho != null && ipwho.optBoolean("success", false)) {
@@ -183,7 +196,6 @@ final class WeatherUpdate {
         }
 
         if (Double.isNaN(lat) || Double.isNaN(lon)) {
-            // Try https://freeipapi.com/api/json
             try {
                 JSONObject freeip = fetchJson("https://freeipapi.com/api/json");
                 if (freeip != null) {
@@ -195,7 +207,6 @@ final class WeatherUpdate {
         }
 
         if (Double.isNaN(lat) || Double.isNaN(lon)) {
-            // Try http://ip-api.com/json
             try {
                 JSONObject ipLoc = fetchJson("http://ip-api.com/json");
                 if (ipLoc != null && "success".equalsIgnoreCase(ipLoc.optString("status"))) {
@@ -238,7 +249,7 @@ final class WeatherUpdate {
             sb.append(" · ").append(city);
         }
 
-        return new WeatherResult(sb.toString(), conditionInfo.iconRes);
+        return new WeatherResult(sb.toString(), conditionInfo.iconName);
     }
 
     private static JSONObject fetchJson(String urlStr) {
@@ -249,12 +260,11 @@ final class WeatherUpdate {
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(6000);
             conn.setReadTimeout(6000);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 CleanYourTv");
-            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (TvHome)");
 
-            if (conn.getResponseCode() == 200) {
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+            int code = conn.getResponseCode();
+            if (code == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -273,69 +283,69 @@ final class WeatherUpdate {
 
     private static class ConditionInfo {
         final String label;
-        final int iconRes;
+        final String iconName;
 
-        ConditionInfo(String label, int iconRes) {
+        ConditionInfo(String label, String iconName) {
             this.label = label;
-            this.iconRes = iconRes;
+            this.iconName = iconName;
         }
     }
 
     private static ConditionInfo getConditionInfo(double temp, int code, boolean isDay) {
         // Hot condition override (> 35°C on clear/sunny days)
         if (temp >= 35.0 && (code == 0 || code == 1)) {
-            return new ConditionInfo(isDay ? "Hot & Sunny" : "Hot", R.drawable.ic_weather_hot);
+            return new ConditionInfo(isDay ? "Hot & Sunny" : "Hot", "hot");
         }
 
         switch (code) {
             case 0: // Clear sky
                 return new ConditionInfo(
                         isDay ? "Sunny" : "Clear",
-                        isDay ? R.drawable.ic_weather_sunny : R.drawable.ic_weather_clear_night);
+                        isDay ? "sunny" : "clear_night");
             case 1: // Mainly clear
                 return new ConditionInfo(
                         isDay ? "Mainly Sunny" : "Mainly Clear",
-                        isDay ? R.drawable.ic_weather_sunny : R.drawable.ic_weather_clear_night);
+                        isDay ? "sunny" : "clear_night");
             case 2: // Partly cloudy
                 return new ConditionInfo(
                         "Partly Cloudy",
-                        isDay ? R.drawable.ic_weather_partly_cloudy_day : R.drawable.ic_weather_partly_cloudy_night);
+                        isDay ? "partly_cloudy_day" : "partly_cloudy_night");
             case 3: // Overcast
-                return new ConditionInfo("Cloudy", R.drawable.ic_weather_cloudy);
+                return new ConditionInfo("Cloudy", "cloudy");
             case 45:
             case 48: // Fog
-                return new ConditionInfo("Foggy", R.drawable.ic_weather_fog);
+                return new ConditionInfo("Foggy", "fog");
             case 51:
             case 53:
             case 55:
             case 56:
             case 57: // Drizzle
-                return new ConditionInfo("Drizzle", R.drawable.ic_weather_rainy);
+                return new ConditionInfo("Drizzle", "rainy");
             case 61:
             case 63:
             case 65:
             case 66:
             case 67: // Rain
-                return new ConditionInfo("Raining", R.drawable.ic_weather_rainy);
+                return new ConditionInfo("Raining", "rainy");
             case 71:
             case 73:
             case 75:
             case 77:
             case 85:
             case 86: // Snow
-                return new ConditionInfo("Snowing", R.drawable.ic_weather_snow);
+                return new ConditionInfo("Snowing", "snow");
             case 80:
             case 81:
             case 82: // Showers
-                return new ConditionInfo("Rain Showers", R.drawable.ic_weather_rainy);
+                return new ConditionInfo("Rain Showers", "rainy");
             case 95:
             case 96:
             case 99: // Thunderstorm
-                return new ConditionInfo("Thunderstorm", R.drawable.ic_weather_thunderstorm);
+                return new ConditionInfo("Thunderstorm", "thunderstorm");
             default:
                 return new ConditionInfo(
                         isDay ? "Sunny" : "Clear",
-                        isDay ? R.drawable.ic_weather_sunny : R.drawable.ic_weather_clear_night);
+                        isDay ? "sunny" : "clear_night");
         }
     }
 }

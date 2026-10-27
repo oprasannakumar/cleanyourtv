@@ -1,6 +1,8 @@
 package com.gathin.tvhome;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,12 +25,32 @@ import java.util.List;
 
 final class CalendarTicker {
     private static final String TAG = "CalendarTicker";
+    private static final long CYCLE_INTERVAL_MS = 3000L; // 3 seconds gap
 
     private final Context context;
     private final View tickerRow;
     private final TextView tickerText;
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<EventItem> events = new ArrayList<>();
     private int currentIndex = 0;
+    private boolean isRunning = false;
+    private LocalDate lastLoadedDate = null;
+
+    private final Runnable cycleRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!isRunning) return;
+
+            if (events.size() > 1 && tickerText != null) {
+                currentIndex = (currentIndex + 1) % events.size();
+                updateDisplay();
+                tickerText.setAlpha(0.2f);
+                tickerText.animate().alpha(1f).setDuration(300).start();
+            }
+
+            handler.postDelayed(this, CYCLE_INTERVAL_MS);
+        }
+    };
 
     static class EventItem implements Comparable<EventItem> {
         final String title;
@@ -57,23 +79,49 @@ final class CalendarTicker {
     void loadAndRefresh() {
         if (tickerRow == null || tickerText == null) return;
 
+        handler.removeCallbacks(cycleRunnable);
         loadEvents();
+        currentIndex = 0;
         updateDisplay();
+
+        isRunning = true;
+        if (events.size() > 1) {
+            handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
+        }
     }
 
     void onMinuteTick() {
-        if (events.isEmpty()) {
-            if (tickerRow != null) tickerRow.setVisibility(View.GONE);
-            return;
+        LocalDate today = LocalDate.now();
+        if (lastLoadedDate != null && !today.equals(lastLoadedDate)) {
+            loadEvents();
+            if (currentIndex >= events.size()) currentIndex = 0;
+            updateDisplay();
         }
+    }
 
-        // Cycle through next upcoming event on each minute
-        currentIndex = (currentIndex + 1) % Math.min(events.size(), 6);
-        updateDisplay();
+    void pause() {
+        isRunning = false;
+        handler.removeCallbacks(cycleRunnable);
+    }
+
+    void resume() {
+        if (!isRunning) {
+            isRunning = true;
+            handler.removeCallbacks(cycleRunnable);
+            if (events.size() > 1) {
+                handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
+            }
+        }
+    }
+
+    void destroy() {
+        isRunning = false;
+        handler.removeCallbacks(cycleRunnable);
     }
 
     private void loadEvents() {
         events.clear();
+        lastLoadedDate = LocalDate.now();
         String json = readJsonString();
         if (TextUtils.isEmpty(json)) return;
 
@@ -90,9 +138,11 @@ final class CalendarTicker {
                 if (!TextUtils.isEmpty(dateStr) && !TextUtils.isEmpty(title)) {
                     try {
                         LocalDate d = LocalDate.parse(dateStr);
-                        if (!d.isBefore(today)) {
+                        long days = ChronoUnit.DAYS.between(today, d);
+                        // Strict requirement: upcoming 5 days only (days 0 through 5)
+                        if (days >= 0 && days <= 5) {
                             EventItem item = new EventItem(title, d, type);
-                            item.daysAway = ChronoUnit.DAYS.between(today, d);
+                            item.daysAway = days;
                             events.add(item);
                         }
                     } catch (Exception ignored) {}
@@ -107,7 +157,7 @@ final class CalendarTicker {
 
     private void updateDisplay() {
         if (events.isEmpty()) {
-            tickerRow.setVisibility(View.GONE);
+            if (tickerRow != null) tickerRow.setVisibility(View.GONE);
             return;
         }
 

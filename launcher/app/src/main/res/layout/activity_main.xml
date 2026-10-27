@@ -175,32 +175,6 @@
                 <!-- The header texts use gravity left, not start: the launcher lays out left to right
                      (no supportsRtl), and with start a right-to-left script such as Arabic would move to the
                      right edge of these full-width lines instead of staying under the clock. -->
-                <!-- Upcoming Birthday / Festival / Event Ticker -->
-                <LinearLayout
-                    android:id="@+id/calendarTickerRow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginBottom="3dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/calendarTicker"
-                        android:gravity="left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:ellipsize="end"
-                        android:textColor="#FFD54F"
-                        android:textSize="12sp"
-                        android:fontFamily="@string/font_medium"
-                        android:letterSpacing="0.06"
-                        android:textAllCaps="true"
-                        android:includeFontPadding="false" />
-                </LinearLayout>
-
                 <TextView
                     android:id="@+id/greeting"
                     android:gravity="left"
@@ -347,6 +321,32 @@
                             android:textAllCaps="true"
                             android:visibility="gone" />
                     </LinearLayout>
+                </LinearLayout>
+
+                <!-- Upcoming Birthday / Festival / Event Ticker under time and date -->
+                <LinearLayout
+                    android:id="@+id/calendarTickerRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="6dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/calendarTicker"
+                        android:gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="#FFD54F"
+                        android:textSize="12sp"
+                        android:fontFamily="@string/font_medium"
+                        android:letterSpacing="0.06"
+                        android:textAllCaps="true"
+                        android:includeFontPadding="false" />
                 </LinearLayout>
 
             </LinearLayout>
