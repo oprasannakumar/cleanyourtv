@@ -199,6 +199,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean inputsConnectedOnly;
     private boolean shamsi;
     private WeatherUpdate weatherUpdate;
+    private CalendarTicker calendarTicker;
     /** greeting_name: said after the greeting, which is shown in capitals. */
     private String greetingName = "";
     /** Optional time-of-day backdrop (config.xml, sky_intensity); 0 keeps it hidden. */
@@ -381,6 +382,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             sky.update();
             wallpaperPlayer.update();
             if (weatherUpdate != null) weatherUpdate.onMinuteTick();
+            if (calendarTicker != null) calendarTicker.onMinuteTick();
             handler.postDelayed(this, MINUTE_MS);
         }
     };
@@ -520,6 +522,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (weatherRow != null && getResources().getBoolean(R.bool.show_weather)) {
             weatherUpdate = new WeatherUpdate(this, weatherRow, weatherIcon, weather);
             weatherUpdate.initAndRefresh();
+        }
+        View calendarTickerRow = findViewById(R.id.calendarTickerRow);
+        TextView calendarTickerText = findViewById(R.id.calendarTicker);
+        if (calendarTickerRow != null && calendarTickerText != null) {
+            calendarTicker = new CalendarTicker(this, calendarTickerRow, calendarTickerText);
+            calendarTicker.loadAndRefresh();
         }
         vpnApp = cfg.vpnApp;
         vpnPill = cfg.vpnPill && !cfg.topMenu;
@@ -984,6 +992,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         updateGreeting();
         updateRace();
         if (weatherUpdate != null) weatherUpdate.initAndRefresh();
+        if (calendarTicker != null) calendarTicker.loadAndRefresh();
         // The network and Inputs pills keep their state while Home is in the background, and callbacks update them
         // when the network or the inputs change, so this refresh only catches anything missed. Its binder calls
         // (about 7 ms on a TCL C755, most of it WifiManager.getConnectionInfo) would hold up the first frame back
