@@ -3212,6 +3212,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             final Intent finalUsbIntent = usbExplorer;
             addInputRow(rows, popup, R.drawable.ic_usb, getString(R.string.usb_drive), -1, () -> open(finalUsbIntent));
         }
+
+        Intent miracast = getPackageManager().getLeanbackLaunchIntentForPackage("com.xiaomi.mitv.smartshare");
+        if (miracast == null) {
+            miracast = getPackageManager().getLaunchIntentForPackage("com.xiaomi.mitv.smartshare");
+        }
+        if (miracast != null) {
+            final Intent finalMiracast = miracast;
+            addInputRow(rows, popup, R.drawable.ic_cast, "Miracast", -1, () -> open(finalMiracast));
+        }
         if (rows.getChildCount() == 0) {
             Toast.makeText(this, R.string.no_inputs, Toast.LENGTH_SHORT).show();
             return;
