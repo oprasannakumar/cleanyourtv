@@ -323,7 +323,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Upcoming Birthday / Festival / Event Ticker under time and date -->
+                <!-- Upcoming Birthday Ticker under time and date -->
                 <LinearLayout
                     android:id="@+id/calendarTickerRow"
                     android:layout_width="wrap_content"
@@ -342,10 +342,59 @@
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:textColor="#FFD54F"
-                        android:textSize="12sp"
+                        android:textSize="15sp"
                         android:fontFamily="@string/font_medium"
-                        android:letterSpacing="0.06"
+                        android:letterSpacing="0.04"
                         android:textAllCaps="true"
+                        android:includeFontPadding="false" />
+                </LinearLayout>
+
+                <!-- Upcoming Telugu Festivals Ticker (upcoming 5 events) -->
+                <LinearLayout
+                    android:id="@+id/festivalTickerRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/festivalTicker"
+                        android:gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="#FFFF8A65"
+                        android:textSize="15sp"
+                        android:fontFamily="@string/font_medium"
+                        android:letterSpacing="0.02"
+                        android:includeFontPadding="false" />
+                </LinearLayout>
+
+                <!-- Daily Telugu Panchangam (Tithi with timings, Nakshatram, Rahu Kalam) -->
+                <LinearLayout
+                    android:id="@+id/panchangamRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/panchangamText"
+                        android:gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="#FFE0E0E0"
+                        android:textSize="14sp"
+                        android:fontFamily="@string/font_regular"
                         android:includeFontPadding="false" />
                 </LinearLayout>
 

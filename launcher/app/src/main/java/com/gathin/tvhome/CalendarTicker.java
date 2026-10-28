@@ -117,12 +117,10 @@ final class CalendarTicker {
     }
 
     void resume() {
-        if (!isRunning) {
-            isRunning = true;
-            handler.removeCallbacks(cycleRunnable);
-            if (events.size() > 1) {
-                handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
-            }
+        isRunning = true;
+        handler.removeCallbacks(cycleRunnable);
+        if (events.size() > 1) {
+            handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
         }
     }
 
@@ -151,8 +149,13 @@ final class CalendarTicker {
                     try {
                         LocalDate d = LocalDate.parse(dateStr);
                         long days = ChronoUnit.DAYS.between(today, d);
-                        // Strict requirement: upcoming 5 days only (days 0 through 5)
-                        if (days >= 0 && days <= 5) {
+                        // Upcoming events (top 5 upcoming birthdays/anniversaries)
+                        boolean isBdayOrAnni = "birthday".equalsIgnoreCase(type) ||
+                                "anniversary".equalsIgnoreCase(type) ||
+                                title.toLowerCase().contains("birthday") ||
+                                title.toLowerCase().contains("anniversary");
+
+                        if (isBdayOrAnni && days >= 0 && days <= 60) {
                             EventItem item = new EventItem(title, d, type);
                             item.daysAway = days;
                             events.add(item);
@@ -162,6 +165,9 @@ final class CalendarTicker {
             }
 
             Collections.sort(events);
+            if (events.size() > 5) {
+                events.subList(5, events.size()).clear();
+            }
         } catch (Exception e) {
             Log.w(TAG, "Error parsing calendar events", e);
         }

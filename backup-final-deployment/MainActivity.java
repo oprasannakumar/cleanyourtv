@@ -200,6 +200,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean shamsi;
     private WeatherUpdate weatherUpdate;
     private CalendarTicker calendarTicker;
+    private TeluguPanchangam teluguPanchangam;
     private long lastHomePressTime = 0L;
     private static final long DOUBLE_TAP_TIMEOUT_MS = 550L;
     private static final long DOUBLE_TAP_MIN_INTERVAL_MS = 80L;
@@ -405,6 +406,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             wallpaperPlayer.update();
             if (weatherUpdate != null) weatherUpdate.onMinuteTick();
             if (calendarTicker != null) calendarTicker.onMinuteTick();
+            if (teluguPanchangam != null) teluguPanchangam.onMinuteTick();
             handler.postDelayed(this, MINUTE_MS);
         }
     };
@@ -550,6 +552,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (calendarTickerRow != null && calendarTickerText != null) {
             calendarTicker = new CalendarTicker(this, calendarTickerRow, calendarTickerText);
             calendarTicker.loadAndRefresh();
+        }
+        View festivalTickerRow = findViewById(R.id.festivalTickerRow);
+        TextView festivalTickerText = findViewById(R.id.festivalTicker);
+        View panchangamRow = findViewById(R.id.panchangamRow);
+        TextView panchangamText = findViewById(R.id.panchangamText);
+        if (festivalTickerRow != null && festivalTickerText != null &&
+                panchangamRow != null && panchangamText != null) {
+            teluguPanchangam = new TeluguPanchangam(this, festivalTickerRow, festivalTickerText, panchangamRow, panchangamText);
+            teluguPanchangam.loadAndRefresh();
         }
         vpnApp = cfg.vpnApp;
         vpnPill = cfg.vpnPill && !cfg.topMenu;
@@ -1007,6 +1018,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         updateRace();
         if (weatherUpdate != null) weatherUpdate.initAndRefresh();
         if (calendarTicker != null) calendarTicker.resume();
+        if (teluguPanchangam != null) teluguPanchangam.resume();
         // The network and Inputs pills keep their state while Home is in the background, and callbacks update them
         // when the network or the inputs change, so this refresh only catches anything missed. Its binder calls
         // (about 7 ms on a TCL C755, most of it WifiManager.getConnectionInfo) would hold up the first frame back
@@ -1187,6 +1199,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ambient.animate().cancel();
         heroArt.animate().cancel();
         if (calendarTicker != null) calendarTicker.pause();
+        if (teluguPanchangam != null) teluguPanchangam.pause();
         handler.removeCallbacks(minuteTick);
         stopStats();
         if (diya != null) diya.stop();
@@ -1244,6 +1257,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         super.onDestroy();
         if (weatherUpdate != null) weatherUpdate.destroy();
         if (calendarTicker != null) calendarTicker.destroy();
+        if (teluguPanchangam != null) teluguPanchangam.destroy();
         unregisterReceiver(packageReceiver);
         wallpaperPlayer.close();
         ConnectivityManager cm = getSystemService(ConnectivityManager.class);
