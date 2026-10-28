@@ -36,7 +36,7 @@ final class CalendarSync {
     private static final String TAG = "CalendarSync";
     private static final String PREFS = "calendar_sync_prefs";
     private static final String KEY_LAST_SYNC = "last_sync_time";
-    private static final long SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L; // Every 4 hours
+    private static final long SYNC_INTERVAL_MS = 15 * 60 * 1000L; // Auto-sync every 15 minutes via Wi-Fi
 
     // User's secret iCal feed for standalone direct sync
     private static final String SECRET_ICAL_URL =

@@ -122,6 +122,12 @@ final class CalendarTicker {
         if (events.size() > 1) {
             handler.postDelayed(cycleRunnable, CYCLE_INTERVAL_MS);
         }
+
+        // Check if Wi-Fi sync is due (every 15 min) whenever returning to Home
+        CalendarSync.syncIfNeeded(context, () -> {
+            loadEvents();
+            updateDisplay();
+        });
     }
 
     void destroy() {
