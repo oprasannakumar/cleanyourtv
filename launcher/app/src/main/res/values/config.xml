@@ -161,7 +161,7 @@
          off the enabled list. true: Home puts the helpers that were running back when it starts; one turned off in
          Settings stays off. Needs WRITE_SECURE_SETTINGS, which build-and-install grants with RESTORE_KEY_SERVICES=1
          (-RestoreKeyServices on Windows). Can also be set with "restore_key_services": true in a theme's config.json. -->
-    <bool name="restore_key_services">false</bool>
+    <bool name="restore_key_services">true</bool>
 
     <!-- More remote buttons that open the input switcher, by Android keycode (INPUT_KEY_SERVICE=1
          build-and-install.sh; KEYCODE_TV always does). For buttons only a disabled app answered: the Xiaomi
@@ -202,6 +202,16 @@
          where the firmware hands KEYCODE_GUIDE (172) to the stock launcher and no app ever receives it. Leave empty
          to omit. -->
     <string-array name="app_keys" translatable="false">
+        <item>192:mute</item>
+        <item>KEYCODE_BUTTON_5:mute</item>
+        <item>580:mute</item>
+        <item>350:mute</item>
+        <item>351:mute</item>
+        <item>352:mute</item>
+        <item>KEYCODE_PROG_RED:mute</item>
+        <item>KEYCODE_WINDOW:mute</item>
+        <item>KEYCODE_HOME:home</item>
+        <item>hold:KEYCODE_HOME:settings</item>
     </string-array>
 
     <!-- Package of the stock launcher, for TVs whose firmware turns it back on after it was disabled. XGIMI's

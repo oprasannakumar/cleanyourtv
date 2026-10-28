@@ -304,7 +304,11 @@ final class RemoteKeys {
         if (!isAction(target)) return false;
         int global = globalAction(target, Build.VERSION.SDK_INT);
         if (global != 0) {
-            if (ctx instanceof AccessibilityService) ((AccessibilityService) ctx).performGlobalAction(global);
+            if (ctx instanceof AccessibilityService) {
+                ((AccessibilityService) ctx).performGlobalAction(global);
+            } else if (ctx instanceof MainActivity && "home".equals(target)) {
+                ((MainActivity) ctx).resetToTop();
+            }
             return true;
         }
         switch (target) {

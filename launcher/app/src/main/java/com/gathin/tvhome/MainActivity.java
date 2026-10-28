@@ -414,6 +414,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     };
 
     private java.util.Map<Integer, String> homeAppKeys = java.util.Collections.emptyMap();
+    private java.util.Map<Integer, String> homeHoldAppKeys = java.util.Collections.emptyMap();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -423,6 +424,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // config.xml, overlaid by config.json from a pushed theme (see Config and tools/theme.sh).
         Config cfg = Config.load(this);
         homeAppKeys = RemoteKeys.parseAppKeys(cfg.appKeys);
+        homeHoldAppKeys = RemoteKeys.parseHoldAppKeys(cfg.appKeys);
         appLibrarySelection = cfg.appLibrarySelection;
         libraryOkOpens = cfg.libraryOkOpens;
         // restore_key_services: after a force stop, put back the remote's accessibility helpers that Android took
@@ -974,12 +976,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * Back to the top with the first dock tile focused, like the stock launcher. Back from an app
      * never comes this way, so returning to the app you left from is unchanged (#118).
      */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (openLauncherSettingsIfAsked(intent)) return;
-        if (openInputsIfAsked(intent)) return;
-        if (intent == null || !intent.hasCategory(Intent.CATEGORY_HOME)) return;
+    void resetToTop() {
         if (checkHomeDoubleTap()) return;
         grid.scrollToPosition(0);
         lastFocused = 0;
@@ -991,6 +988,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // so only go back to the first one; rebuilding would replay the entrance animation for nothing.
             grid.post(() -> focusTile(0));
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (openLauncherSettingsIfAsked(intent)) return;
+        if (openInputsIfAsked(intent)) return;
+        if (intent == null || !intent.hasCategory(Intent.CATEGORY_HOME)) return;
+        resetToTop();
     }
 
     @Override
@@ -1334,8 +1340,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 if (checkHomeDoubleTap()) return true;
             }
         }
-        // Vendor keys (TCL Netflix button, 4062) never reach the key services, only the focused window.
-        if (event.getKeyCode() >= 1000 && RemoteKeys.handle(this, event, homeAppKeys.get(event.getKeyCode()), null)) return true;
+        if (RemoteKeys.handle(this, event, homeAppKeys.get(event.getKeyCode()), homeHoldAppKeys.get(event.getKeyCode()))) return true;
         if (handleSettingsKey(event)) return true;
         if (tileMenuEnabled && !reordering && openPopup == null && cardPrompt == null
                 && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
