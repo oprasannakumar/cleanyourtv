@@ -1,0 +1,32 @@
+# Xiaomi Smart TV (MiTV-MZTU0, codename river / wz8e, MediaTek MT9676)
+# Firmware: V816.0.26.5.6.5.URTMIXM, Android TV 14 (Google TV, API 34).
+# Panel: 4K UHD (1080p density 320 UI).
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/xiaomi-mitv-mztu0/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/xiaomi-mitv-mztu0/debloat.txt
+
+# Xiaomi telemetry, analytics & tracking
+com.miui.tv.analytics
+com.xiaomi.statistic
+com.xiaomi.tvqs.overseas.y24
+com.xiaomi.floatingframe
+
+# Xiaomi content tabs, ads & bloatware
+com.mitv.tvhome.oemtab
+com.mitv.tvhome.michannel
+com.mitv.tvhome.atv
+com.mitv.tvhome.mitvplus
+com.xm.webcontent
+com.xiaomi.mimusic2
+com.xiaomi.mitv.tvmanager
+
+# Unused DTV tuner inputs
+com.mediatek.dtv.tvinput.isdbtuner
+com.mediatek.dtv.tvinput.atsctuner
+com.iwedia.tvinput
+
+# Google TV background recommendation & feedback bloat
+com.google.android.feedback
+android.autoinstalls.config.google.gtvpai
+com.google.android.play.games
+com.google.android.youtube.tvmusic

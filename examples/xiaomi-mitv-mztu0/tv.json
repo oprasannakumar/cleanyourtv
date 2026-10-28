@@ -1,0 +1,6 @@
+{
+  "tv": "Xiaomi Smart TV (MiTV-MZTU0, river / wz8e, MediaTek MT9676), firmware V816.0.26.5.6.5.URTMIXM",
+  "os": "Android TV 14 (Google TV, SDK 34)",
+  "brand": "Xiaomi",
+  "notes": "Google TV on Android 14. Supports custom lightweight launcher without dock, fixed 3-row layout, live Google Calendar birthday/event ticker, Telugu festivals, Vedic Panchangam, top app header with recently opened relative time, and on-TV instant sync. Sideloading requires adb push + pm install -r."
+}

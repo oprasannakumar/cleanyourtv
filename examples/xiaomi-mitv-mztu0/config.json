@@ -1,0 +1,12 @@
+{
+  "dock_row": false,
+  "dock_band": false,
+  "rows_below_dock": 2,
+  "columns": 6,
+  "exact_rows": 3,
+  "top_app_header": true,
+  "selected_app_meta": true,
+  "calendar_ticker": true,
+  "telugu_panchangam": true,
+  "ontv_sync": true
+}
