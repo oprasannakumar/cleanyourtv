@@ -198,6 +198,30 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** config.xml inputs_connected_only: the Inputs menu lists only connected inputs, the rest behind "More inputs". */
     private boolean inputsConnectedOnly;
     private boolean shamsi;
+    private WeatherUpdate weatherUpdate;
+    private CalendarTicker calendarTicker;
+    private long lastHomePressTime = 0L;
+    private static final long DOUBLE_TAP_TIMEOUT_MS = 550L;
+    private static final long DOUBLE_TAP_MIN_INTERVAL_MS = 80L;
+
+    /**
+     * Checks if the Home button was double-tapped within DOUBLE_TAP_TIMEOUT_MS.
+     * If so, switches to the other recently used application (Alt-Tab on TV).
+     */
+    private boolean checkHomeDoubleTap() {
+        long now = android.os.SystemClock.uptimeMillis();
+        long diff = now - lastHomePressTime;
+        if (diff < DOUBLE_TAP_MIN_INTERVAL_MS) {
+            // Duplicate event from the same physical press (e.g. key event + onNewIntent delivery)
+            return false;
+        }
+        lastHomePressTime = now;
+        if (diff <= DOUBLE_TAP_TIMEOUT_MS) {
+            lastHomePressTime = 0L;
+            return AppSwitcher.switchApp(this);
+        }
+        return false;
+    }
     /** greeting_name: said after the greeting, which is shown in capitals. */
     private String greetingName = "";
     /** Optional time-of-day backdrop (config.xml, sky_intensity); 0 keeps it hidden. */
@@ -379,6 +403,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (festive) updateWifiLabel();
             sky.update();
             wallpaperPlayer.update();
+            if (weatherUpdate != null) weatherUpdate.onMinuteTick();
+            if (calendarTicker != null) calendarTicker.onMinuteTick();
             handler.postDelayed(this, MINUTE_MS);
         }
     };
@@ -511,6 +537,19 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             date.setTextSize(11f);
             lunarDate.setTextSize(11f);
             date.setPadding(0, (int) (4 * density), 0, 0);
+        }
+        View weatherRow = findViewById(R.id.weatherRow);
+        ImageView weatherIcon = findViewById(R.id.weatherIcon);
+        TextView weather = findViewById(R.id.weather);
+        if (weatherRow != null && getResources().getBoolean(R.bool.show_weather)) {
+            weatherUpdate = new WeatherUpdate(this, weatherRow, weatherIcon, weather);
+            weatherUpdate.initAndRefresh();
+        }
+        View calendarTickerRow = findViewById(R.id.calendarTickerRow);
+        TextView calendarTickerText = findViewById(R.id.calendarTicker);
+        if (calendarTickerRow != null && calendarTickerText != null) {
+            calendarTicker = new CalendarTicker(this, calendarTickerRow, calendarTickerText);
+            calendarTicker.loadAndRefresh();
         }
         vpnApp = cfg.vpnApp;
         vpnPill = cfg.vpnPill && !cfg.topMenu;
@@ -720,11 +759,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             ((TextView) btnSettings).setText(R.string.launcher_settings);
             ((TextView) btnSettings).setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_home_settings_pill, 0, 0, 0);
         }
-        btnSettings.setOnClickListener(v -> {
-            if (launcherSettingsButton) startActivityForResult(
-                    new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
-            else open(systemIntent(Settings.ACTION_SETTINGS));
-        });
+        btnSettings.setOnClickListener(v -> showSettingsMenu());
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
         btnReorder.setVisibility(cfg.reorderButton ? View.VISIBLE : View.GONE);
@@ -914,6 +949,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (openLauncherSettingsIfAsked(intent)) return;
         if (openInputsIfAsked(intent)) return;
         if (intent == null || !intent.hasCategory(Intent.CATEGORY_HOME)) return;
+        if (checkHomeDoubleTap()) return;
         grid.scrollToPosition(0);
         lastFocused = 0;
         lastFocusedKey = adapter.getItemCount() > 0 ? adapter.keyAt(0) : null;
@@ -964,9 +1000,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 reloadApps(true);
                 break;
             case REFOCUS:
-                // The same tiles: only the focus goes back, as after a rebuild, without replaying the entrance.
+                // Rebuild apps so they reorder themselves dynamically by usage without replaying entrance animation
                 tilesReady = false;
-                reloadApps(true, false, false);
+                reloadApps(false, true, false);
                 break;
             default:
                 break;
@@ -974,6 +1010,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (openLiveTvAfterBoot()) return;
         updateGreeting();
         updateRace();
+        if (weatherUpdate != null) weatherUpdate.initAndRefresh();
+        if (calendarTicker != null) calendarTicker.resume();
         // The network and Inputs pills keep their state while Home is in the background, and callbacks update them
         // when the network or the inputs change, so this refresh only catches anything missed. Its binder calls
         // (about 7 ms on a TCL C755, most of it WifiManager.getConnectionInfo) would hold up the first frame back
@@ -1051,7 +1089,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Capture the app before rebinding can move focus and overwrite its key.
         final String returnKey = lastFocusedKey;
         final int returnSlot = lastFocused;
-        final boolean restoreFocus = appLibrary == null && (animate || grid.hasFocus());
+        View settingsBtn = findViewById(R.id.btnSettings);
+        final boolean topBarHasFocus = (btnInputs != null && btnInputs.hasFocus())
+                || (btnWifi != null && btnWifi.hasFocus())
+                || (settingsBtn != null && settingsBtn.hasFocus());
+        final boolean restoreFocus = appLibrary == null && !topBarHasFocus;
         if (restoreFocus) {
             glassShown = false;
             glass.setAlpha(0f);
@@ -1161,6 +1203,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         hero.animate().cancel();
         ambient.animate().cancel();
         heroArt.animate().cancel();
+        if (calendarTicker != null) calendarTicker.pause();
         handler.removeCallbacks(minuteTick);
         stopStats();
         if (diya != null) diya.stop();
@@ -1216,6 +1259,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (weatherUpdate != null) weatherUpdate.destroy();
+        if (calendarTicker != null) calendarTicker.destroy();
         unregisterReceiver(packageReceiver);
         wallpaperPlayer.close();
         ConnectivityManager cm = getSystemService(ConnectivityManager.class);
@@ -1259,6 +1304,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      */
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && !event.isCanceled()) {
+            int keyCode = event.getKeyCode();
+            if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+                if (AppSwitcher.switchApp(this)) return true;
+            } else if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_ALL_APPS) {
+                if (checkHomeDoubleTap()) return true;
+            }
+        }
         // Vendor keys (TCL Netflix button, 4062) never reach the key services, only the focused window.
         if (event.getKeyCode() >= 1000 && RemoteKeys.handle(this, event, homeAppKeys.get(event.getKeyCode()), null)) return true;
         if (handleSettingsKey(event)) return true;
@@ -2634,6 +2687,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             }
             if (!online) {
                 text = getString(R.string.offline);
+                icon = R.drawable.ic_wifi_off;
                 vpn = false;
             } else if (ethernet) {
                 text = getString(R.string.ethernet);
@@ -2648,6 +2702,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 if (ssid != null) {
                     ssid = ssid.replace("\"", "").trim();
                     if (!ssid.isEmpty() && !ssid.contains("unknown") && !ssid.equals("0x")) text = ssid;
+                }
+                if (!validated) {
+                    icon = R.drawable.ic_wifi_no_internet;
+                } else {
+                    icon = R.drawable.ic_wifi;
                 }
             }
         } catch (Exception ignored) {
@@ -2684,7 +2743,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             btnWifi.setText(text);
         }
         if (wifiIconOnly) {
-            btnWifi.setContentDescription(btnWifi.getText());
+            String desc = text;
+            if (online && validated) {
+                desc = (text != null ? text : "Wi-Fi") + " (Internet Available)";
+            } else if (online && !validated) {
+                desc = (text != null ? text : "Wi-Fi") + " (Connected, No Internet)";
+            } else {
+                desc = "Wi-Fi: Disconnected (Offline)";
+            }
+            btnWifi.setContentDescription(desc);
             btnWifi.setText(null);
         }
         if (festive && diya != null) {
@@ -2696,10 +2763,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 wifiIcon = icon;
                 btnWifi.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
             }
-            ColorStateList tint = online ? wifiOnlineTint : wifiPlainTint;
-            // wifi_status_warnings: orange while connected but not validated (a captive portal), red while offline.
-            if (wifiNoInternetTint != null) tint = !online ? wifiOfflineTint : validated ? wifiOnlineTint : wifiNoInternetTint;
-            if (wifiOnlineTint != null && btnWifi.getCompoundDrawableTintList() != tint) {
+            ColorStateList tint = !online ? wifiOfflineTint : validated ? wifiOnlineTint : wifiNoInternetTint;
+            if (tint == null) tint = online ? wifiOnlineTint : wifiPlainTint;
+            if (tint != null && btnWifi.getCompoundDrawableTintList() != tint) {
                 btnWifi.setCompoundDrawableTintList(tint);
             }
         }
@@ -2925,6 +2991,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             startActivity(i);
+            String pkg = i.getPackage();
+            if (pkg == null && i.getComponent() != null) pkg = i.getComponent().getPackageName();
+            if (pkg != null) AppSwitcher.recordAppLaunch(this, pkg);
         } catch (ActivityNotFoundException | SecurityException e) {
             Toast.makeText(this, R.string.not_available, Toast.LENGTH_SHORT).show();
         }
@@ -3192,6 +3261,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             final Intent finalUsbIntent = usbExplorer;
             addInputRow(rows, popup, R.drawable.ic_usb, getString(R.string.usb_drive), -1, () -> open(finalUsbIntent));
         }
+
+        Intent miracast = getPackageManager().getLeanbackLaunchIntentForPackage("com.xiaomi.mitv.smartshare");
+        if (miracast == null) {
+            miracast = getPackageManager().getLaunchIntentForPackage("com.xiaomi.mitv.smartshare");
+        }
+        if (miracast != null) {
+            final Intent finalMiracast = miracast;
+            addInputRow(rows, popup, R.drawable.ic_cast, "Miracast", -1, () -> open(finalMiracast));
+        }
         if (rows.getChildCount() == 0) {
             Toast.makeText(this, R.string.no_inputs, Toast.LENGTH_SHORT).show();
             return;
@@ -3270,6 +3348,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             popup.dismiss();
             action.run();
         });
+        row.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && event.getAction() == KeyEvent.ACTION_DOWN) {
+                popup.dismiss();
+                View wifi = findViewById(R.id.btnWifi);
+                if (wifi != null && wifi.getVisibility() == View.VISIBLE) {
+                    wifi.requestFocus();
+                }
+                return true;
+            }
+            return false;
+        });
         rows.addView(row);
         return row;
     }
@@ -3311,8 +3400,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (200 * density));
-        if (!launcherSettingsButton) addSettingsMenuRow(rows, popup, R.string.launcher_settings, () -> startActivityForResult(
+        addSettingsMenuRow(rows, popup, R.string.launcher_settings, () -> startActivityForResult(
                 new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
+        addSettingsMenuRow(rows, popup, R.string.settings, () -> open(systemIntent(Settings.ACTION_SETTINGS)));
         // Firmware that ships its own settings app next to the AOSP one (Xiaomi China is one): the
         // vendor app holds pages the AOSP settings has no row for, such as Account & Security with
         // the ADB switch. Offered here only while one of them is installed.
@@ -3322,9 +3412,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 if (vendor != null) open(vendor);
             });
         }
-        if (moduleCards) addSettingsMenuRow(rows, popup, R.string.module_cards, this::showModuleCards);
-        if (dockRow) addSettingsMenuRow(rows, popup, R.string.dock_edit, this::startDockEdit);
-        addSettingsMenuRow(rows, popup, R.string.reorder, this::toggleReorder);
         // A launcher may not restart the TV itself; the Home key helper can open the system power menu instead.
         if (HomeKeyService.canOpenPowerMenu()) addSettingsMenuRow(rows, popup, R.string.power_menu, HomeKeyService::openPowerMenu);
         panel.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -3350,19 +3437,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View panel = getLayoutInflater().inflate(R.layout.popup_inputs, root, false);
         LinearLayout rows = panel.findViewById(R.id.rows);
         PopupWindow popup = glassPopup(panel, (int) (200 * density));
-        if (dockRow && position < adapter.movableCount()) {
-            boolean inDock = position < COLUMNS;
-            addSettingsMenuRow(rows, popup, inDock ? R.string.tile_replace_in_dock : R.string.tile_add_to_dock,
-                    () -> startDockEditFor(key, inDock));
-        }
-        if (position < adapter.movableCount()) addSettingsMenuRow(rows, popup, R.string.tile_move, () -> {
-            if (!beginReorder()) return;
-            int at = adapter.positionOf(key);   // beginReorder can rebuild the tiles
-            if (at < 0) return;
-            focusTile(at);
-            pickUp(at);
-            Toast.makeText(this, R.string.reorder_hint, Toast.LENGTH_LONG).show();
-        });
         if (appLibraryEnabled) addSettingsMenuRow(rows, popup, R.string.library_remove_shortcut, () -> {
             if (LibraryApps.save(this, pkg, false)) reloadApps(false);
             else Toast.makeText(this, R.string.library_save_failed, Toast.LENGTH_LONG).show();
