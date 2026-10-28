@@ -309,22 +309,11 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 fresh.add(new Entry(label, component, banner, icon));
             }
         }
-        int sortMode = ctx.getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE)
-                .getInt(LauncherSettingsActivity.APP_SORT_KEY, LauncherSettingsActivity.SORT_ACTIVITY);
+        // Pure usage-based reordering: most recently used apps first!
         Collections.sort(fresh, (a, b) -> {
             boolean ca = a.kind == Entry.CARD, cb = b.kind == Entry.CARD;
             if (ca != cb) return ca ? -1 : 1;
 
-            if (sortMode == LauncherSettingsActivity.SORT_ALPHABETICAL) {
-                return a.label.compareToIgnoreCase(b.label);
-            } else if (sortMode == LauncherSettingsActivity.SORT_RECENTS) {
-                long ta = getInstallTime(pm, a.pkg);
-                long tb = getInstallTime(pm, b.pkg);
-                if (ta != tb) return Long.compare(tb, ta);
-                return a.label.compareToIgnoreCase(b.label);
-            }
-
-            // Default: SORT_ACTIVITY (Usage-based reordering: most recently used apps first!)
             long ta = LastOpened.get(ctx, a.pkg);
             long tb = LastOpened.get(ctx, b.pkg);
             if (ta != tb) return Long.compare(tb, ta);
@@ -343,12 +332,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     new ComponentName(ctx, HomeSettingsActivity.class), null,
                     ctx.getDrawable(R.drawable.ic_home_settings), null, 0));
         }
-        docked = 0;
-        if (sortMode == LauncherSettingsActivity.SORT_ACTIVITY) {
-            docked = Math.min(fresh.size(), dockSize);
-        } else {
-            while (docked < fresh.size() && isDocked(fresh.get(docked))) docked++;
-        }
+        docked = Math.min(fresh.size(), dockSize);
         emptySlots = dockRow && !reordering ? DockSlots.empty(docked, dockSize, fresh.size(), fillDock) : 0;
         for (int i = 0; i < emptySlots; i++) {
             fresh.add(docked + i, new Entry(Entry.EMPTY, "", new ComponentName(ctx, "empty-dock-slot-" + i),

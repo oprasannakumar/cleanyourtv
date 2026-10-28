@@ -1089,7 +1089,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Capture the app before rebinding can move focus and overwrite its key.
         final String returnKey = lastFocusedKey;
         final int returnSlot = lastFocused;
-        final boolean restoreFocus = appLibrary == null && (animate || grid.hasFocus());
+        View settingsBtn = findViewById(R.id.btnSettings);
+        final boolean topBarHasFocus = (btnInputs != null && btnInputs.hasFocus())
+                || (btnWifi != null && btnWifi.hasFocus())
+                || (settingsBtn != null && settingsBtn.hasFocus());
+        final boolean restoreFocus = appLibrary == null && !topBarHasFocus;
         if (restoreFocus) {
             glassShown = false;
             glass.setAlpha(0f);

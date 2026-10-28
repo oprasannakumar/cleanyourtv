@@ -37,7 +37,6 @@ public final class LauncherSettingsActivity extends Activity {
     private final TextView[] rowChoices = new TextView[4];
     private static final int[] DOCK_OPACITIES = {100, 70, 50, 30};
     private final TextView[] dockChoices = new TextView[DOCK_OPACITIES.length];
-    private TextView sortChoice;
     private TextView wallpaperChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
@@ -55,8 +54,6 @@ public final class LauncherSettingsActivity extends Activity {
         setContentView(R.layout.activity_launcher_settings);
         choices = getSharedPreferences(Config.SETTINGS_NAME, MODE_PRIVATE);
         Config config = Config.load(this);
-        sortChoice = findViewById(R.id.sortChoice);
-        sortChoice.setOnClickListener(v -> showSortPicker());
         columns = config.columns;
         rowsBelowDock = config.rowsBelowDock;
         dockOpacity = config.dockOpacity;
@@ -159,7 +156,7 @@ public final class LauncherSettingsActivity extends Activity {
         findViewById(R.id.tvSettingsChoice).setOnClickListener(v ->
                 open(SystemSettings.intent(this, Settings.ACTION_SETTINGS)));
         refresh();
-        sortChoice.requestFocus();
+        columnChoices[Math.max(0, Math.min(columns - 4, columnChoices.length - 1))].requestFocus();
     }
 
     private void reverseRow(TextView[] views) {
@@ -240,25 +237,6 @@ public final class LauncherSettingsActivity extends Activity {
                 .show();
     }
 
-    private void showSortPicker() {
-        String[] options = {
-                "Usage-based (Most active apps first)",
-                "Alphabetical (A - Z)",
-                "Recently installed"
-        };
-        int current = choices.getInt(APP_SORT_KEY, SORT_ACTIVITY);
-        new AlertDialog.Builder(this)
-                .setTitle("App sorting")
-                .setSingleChoiceItems(options, current, (dialog, which) -> {
-                    dialog.dismiss();
-                    choices.edit().putInt(APP_SORT_KEY, which).apply();
-                    changed();
-                    refresh();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-    }
-
     /** The picked app's name, its package when it is gone, or Off. */
     private String openOnStartLabel() {
         String pkg = choices.getString(OpenOnStart.KEY, "");
@@ -318,14 +296,6 @@ public final class LauncherSettingsActivity extends Activity {
                         : wallpaperCurrent != null ? wallpaperCurrent
                         : getString(R.string.wallpaper_theme_default)));
         openOnStartChoice.setText(getString(R.string.open_on_start_state, openOnStartLabel()));
-        int sortMode = choices.getInt(APP_SORT_KEY, SORT_ACTIVITY);
-        String sortLabel;
-        switch (sortMode) {
-            case SORT_ALPHABETICAL: sortLabel = "Alphabetical (A - Z)"; break;
-            case SORT_RECENTS: sortLabel = "Recently installed"; break;
-            default: sortLabel = "Usage-based (Most active)"; break;
-        }
-        sortChoice.setText("App sorting: " + sortLabel);
         followThemeChoice.setSelected(!hasOnTvChoices());
     }
 
