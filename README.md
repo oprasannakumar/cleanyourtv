@@ -28,6 +28,30 @@
   <a href="docs/PRESS.md"><img src="docs/card.jpg" alt="341 TV models · 93 brands · 29 languages · 532 KB launcher. Featured in TechCrunch, TechRadar, Tom's Guide, Mashable, Android Authority, XDA, FlatpanelsHD, It's FOSS, Phandroid, GIGAZINE, Xataka, WinFuture, Frandroid, Macitynet, Techaeris, TechPP and 297 more: 313 articles from 44 countries. Before: stock Google TV home with a sponsored ad. After: the Clean Your TV launcher." width="800"></a>
 </p>
 
+---
+
+## 🌟 Customized Smart TV Dashboard (Final Deployment)
+
+A personalized, cultural, ad-free smart TV launcher with Google Calendar sync, Telugu festivals, Vedic Panchangam, and smart usage tracking.
+
+| Google Calendar Birthdays & Festivals | Live Vedic Panchangam & Top App Header |
+| :---: | :---: |
+| <img src="docs/screenshots/final-home-birthday-mavayya.png" width="420" alt="Birthday & Festival Ticker"> | <img src="docs/screenshots/final-home-birthday-shiva.png" width="420" alt="Vedic Panchangam & App Header"> |
+
+| Multiple Countdown Tickers | On-TV Instant Sync Notification |
+| :---: | :---: |
+| <img src="docs/screenshots/final-home-birthday-ekshitha.png" width="420" alt="Upcoming Birthdays"> | <img src="docs/screenshots/final-ontv-sync-toast.png" width="420" alt="On-TV Sync Toast"> |
+
+### Key Features:
+- 🎂 **Google Calendar Countdown**: Real-time ticker for birthdays and upcoming events (`TODAY: MAVAYYA GARU'S BIRTHDAY`, `IN 4 DAYS: (E.C.E) SHIVA'S BIRTHDAY`).
+- 🪔 **Regional Festival Engine**: Integrated 365-day Telugu festival tracker (`నేడు: అట్ల తద్దె`, `నవంబర్ 5: రమా ఏకాదశి`).
+- 📜 **Daily Vedic Panchangam**: Accurate Tithi (with end time), Nakshatram (with end time), and Rahu Kalam timings.
+- 📺 **Prominent Focused App Header**: Displays the selected app's full title (`26sp`) and relative last opened timestamp (`• Last opened 1 minute ago`) above row 1.
+- 📱 **Clean 3-Row Grid**: Dock removed, exactly 3 full rows of applications with 0 half-cut icons.
+- 🔄 **On-TV Instant Sync**: Dedicated button to trigger background sync for calendar, weather, and festivals with live TV toast confirmation.
+
+---
+
 **Samsung, LG, Roku or another non-Android TV?** CleanYourTV can't run there, but you can still turn off
 the tracking, step by step with your remote: [cleanyour.tv/not-android](https://cleanyour.tv/not-android)
 
