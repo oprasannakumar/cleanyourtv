@@ -24,3 +24,5 @@ launcher/replay_pid*.log
 
 *.bundle
 *.zip
+
+calendar_auth.json
