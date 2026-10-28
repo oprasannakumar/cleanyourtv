@@ -96,6 +96,14 @@ final class CalendarTicker {
         });
     }
 
+    void syncNow(Runnable onComplete) {
+        CalendarSync.syncNow(context, () -> handler.post(() -> {
+            loadEvents();
+            updateDisplay();
+            if (onComplete != null) onComplete.run();
+        }));
+    }
+
     void onMinuteTick() {
         LocalDate today = LocalDate.now();
         if (lastLoadedDate != null && !today.equals(lastLoadedDate)) {

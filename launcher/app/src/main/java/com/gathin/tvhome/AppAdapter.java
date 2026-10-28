@@ -160,6 +160,10 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         float perItem = (gridHeightPx - reserved) / (rowsBelowDock + 1);
         float tileH = perItem - (dockRow ? ITEM_EXTRA_DP : COMPACT_ITEM_EXTRA_DP) * density;
         int byHeight = Math.round(tileH * DESIGN_W_DP / DESIGN_H_DP);
+        // Plain grid (dock_row false): strictly respect byHeight so 3 full rows fit with zero half-cut icons.
+        if (!dockRow) {
+            return Math.max(Math.round(60 * density), Math.min(w, byHeight));
+        }
         // Shrink at most to MIN_HEIGHT_FIT of the width-only size. Below that the tiles look lost in their wide
         // columns (2 rows under a titled dock came out at 80dp); the rows that still don't fit run off the bottom
         // and scroll, and MainActivity keeps the title's room above the dock.

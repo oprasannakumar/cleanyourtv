@@ -115,6 +115,40 @@ final class TeluguPanchangam {
         syncIfNeeded();
     }
 
+    void syncNow(Runnable onComplete) {
+        cachedJsonData = null;
+        executor.execute(() -> {
+            try {
+                String syncUrl = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                        .getString("panchangam_sync_url", null);
+                if (!TextUtils.isEmpty(syncUrl)) {
+                    HttpURLConnection conn = (HttpURLConnection) new URL(syncUrl).openConnection();
+                    conn.setConnectTimeout(10000);
+                    conn.setReadTimeout(15000);
+                    conn.setRequestMethod("GET");
+                    if (conn.getResponseCode() == 200) {
+                        try (InputStream in = conn.getInputStream();
+                             FileOutputStream out = new FileOutputStream(new File(context.getFilesDir(), "telugu_panchangam.json"))) {
+                            byte[] buffer = new byte[8192];
+                            int read;
+                            while ((read = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, read);
+                            }
+                        }
+                    }
+                    conn.disconnect();
+                }
+            } catch (Exception e) {
+                Log.e("TeluguPanchangam", "Manual sync error", e);
+            } finally {
+                handler.post(() -> {
+                    loadAndRefresh();
+                    if (onComplete != null) onComplete.run();
+                });
+            }
+        });
+    }
+
     void onMinuteTick() {
         LocalDate today = LocalDate.now();
         if (lastLoadedDate != null && !today.equals(lastLoadedDate)) {
