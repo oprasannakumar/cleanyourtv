@@ -184,8 +184,8 @@ final class TeluguPanchangam {
     private static String formatTeluguDate(LocalDate d) {
         if (d == null) return "";
         String[] teMonths = {
-                "జన", "ఫిబ్ర", "మార్చి", "ఏప్రి", "మే", "జూన్",
-                "జూలై", "ఆగ", "సెప్టెం", "అక్టో", "నవం", "డిసెం"
+                "జనవరి", "ఫిబ్రవరి", "మార్చి", "ఏప్రిల్", "మే", "జూన్",
+                "జూలై", "ఆగస్టు", "సెప్టెంబర్", "అక్టోబర్", "నవంబర్", "డిసెంబర్"
         };
         int mIdx = d.getMonthValue() - 1;
         String month = (mIdx >= 0 && mIdx < teMonths.length) ? teMonths[mIdx] : String.valueOf(d.getMonthValue());
@@ -210,11 +210,9 @@ final class TeluguPanchangam {
             prefix = "🪔 నేడు: ";
         } else if (item.daysAway == 1) {
             prefix = "🪔 రేపు: ";
-        } else if (item.daysAway <= 5) {
-            prefix = "🪔 " + item.daysAway + " రోజుల్లో: ";
         } else {
             String teDate = formatTeluguDate(item.date);
-            prefix = "🪔 " + item.daysAway + " రోజుల్లో (" + teDate + "): ";
+            prefix = "🪔 " + teDate + ": ";
         }
 
         festivalText.setText(prefix + item.title);
