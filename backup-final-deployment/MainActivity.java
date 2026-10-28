@@ -142,6 +142,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private WallpaperPlayer wallpaperPlayer;
     private GlassView glass;
     private View ambient;
+    private TextView selectedAppName;
+    private TextView selectedAppMeta;
     private TextView heroName;
     /** The top shelf: heroName, plus the cinematic shelf's "Last opened" line and dock position dots. */
     private View hero;
@@ -474,6 +476,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ambientGlow = cfg.ambientGlow;
         appGlow = cfg.appGlow;
         if (!ambientGlow) ambient.setVisibility(View.GONE);
+        selectedAppName = findViewById(R.id.selectedAppName);
+        selectedAppMeta = findViewById(R.id.selectedAppMeta);
         heroName = findViewById(R.id.heroName);
         hero = findViewById(R.id.hero);
         // The hero is now a group (name, and the cinematic lines): without this every fade of the default
@@ -608,16 +612,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     return true;
                 }
                 if (dockRow && getPosition(child) < COLUMNS) return false;
-                int top = child.getTop() + rect.top;
-                int bottom = top + rect.height();
-                // A row already fully on screen stays put, even inside the bottom padding (the last row
-                // rows_below_dock leaves visible ends there; nudging it up was the bug). A row that has to scroll
-                // in still stops at the padding line, clear of the screen edge, as before.
+                int top = child.getTop();
+                int bottom = child.getBottom();
+                int padTop = getPaddingTop();
                 int limitBottom = getHeight() - getPaddingBottom();
-                int dy;
-                if (top < 0) dy = top;
-                else if (bottom <= getHeight()) dy = 0;
-                else dy = Math.min(top, bottom - limitBottom);
+                int dy = 0;
+                if (top < padTop) {
+                    dy = top - padTop;
+                } else if (bottom > limitBottom) {
+                    dy = bottom - limitBottom;
+                }
                 if (dy == 0) return false;
                 if (immediate || reducedMotion || !animations) parent.scrollBy(0, dy);
                 else parent.smoothScrollBy(0, dy);
@@ -664,7 +668,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Item height follows the tile size, which follows the columns and the rows that must fit (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
             int tileW = AppAdapter.tileWidthPx(inner, h, COLUMNS, rowsBelowDock, cfg.dockTitle, cfg.dockRow, density);
-            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), density);
+            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), MainActivity.this.dockRow, density);
             int dockRow = itemH + (int) (AppAdapter.DOCK_EXTRA_DP * density);   // item height plus DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             // Keep the hero below the header when the library is enabled on a short screen,
@@ -679,8 +683,25 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // A single row never shows the names under its tiles (the title above the row names the app), so the
             // 7dp gap and 22dp label item_app.xml keeps for them would only lift the row: sit it that much lower.
             if (singleRow && !cfg.alwaysShowNames) want += (int) (29 * density);
-            if (grid.getPaddingTop() != want) {
-                grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), grid.getPaddingBottom());
+            int wantBottom = MainActivity.this.dockRow ? grid.getPaddingBottom() : 0;
+            if (!MainActivity.this.dockRow) {
+                int exact3RowsH = 3 * itemH + want;
+                View gridWrapper = findViewById(R.id.gridWrapper);
+                if (gridWrapper != null) {
+                    ViewGroup.LayoutParams wrapperLp = gridWrapper.getLayoutParams();
+                    if (wrapperLp != null && wrapperLp.height != exact3RowsH) {
+                        wrapperLp.height = exact3RowsH;
+                        gridWrapper.setLayoutParams(wrapperLp);
+                    }
+                }
+                ViewGroup.LayoutParams lp = grid.getLayoutParams();
+                if (lp != null && lp.height != exact3RowsH) {
+                    lp.height = exact3RowsH;
+                    grid.setLayoutParams(lp);
+                }
+            }
+            if (grid.getPaddingTop() != want || grid.getPaddingBottom() != wantBottom) {
+                grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), wantBottom);
                 // A vertical grid parks the dock on the new padding line by scrolling (onTileFocused); a sideways
                 // row cannot scroll vertically, and the layout request made from inside this layout pass is
                 // dropped, so lay the row out again on the next frame. The glass and the title were placed for the
@@ -766,6 +787,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return true;
         });
         btnSettings.setOnClickListener(v -> open(systemIntent(Settings.ACTION_SETTINGS)));
+        View btnSync = findViewById(R.id.btnSync);
+        if (btnSync != null) {
+            btnSync.setOnClickListener(v -> syncCalendarAndPanchangam());
+        }
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
         btnReorder.setVisibility(cfg.reorderButton ? View.VISIBLE : View.GONE);
@@ -1376,6 +1401,26 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return grid.getChildAdapterPosition((View) f.getParent());
     }
 
+    /** Manual sync for Google Calendar events, Telugu festivals and daily Panchangam directly from TV. */
+    private void syncCalendarAndPanchangam() {
+        Toast.makeText(this, "క్యాలెండర్ & పంచాంగం సింక్ ప్రారంభమైంది...", Toast.LENGTH_SHORT).show();
+        if (calendarTicker != null) {
+            calendarTicker.syncNow(() -> {
+                if (teluguPanchangam != null) {
+                    teluguPanchangam.syncNow(() -> {
+                        Toast.makeText(this, "సింక్ పూర్తయింది", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    Toast.makeText(this, "సింక్ పూర్తయింది", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (teluguPanchangam != null) {
+            teluguPanchangam.syncNow(() -> {
+                Toast.makeText(this, "సింక్ పూర్తయింది", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
     /** The reorder button: turns the mode on (focus goes back to the last tile), or off again. */
     private void toggleReorder() {
         if (reordering) {
@@ -1734,6 +1779,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springY.animateToFinalPosition(y - glassScrollShift);
         }
         View item = (View) card.getParent();
+        updateSelectedAppInfo(position);
         if (dockRow && (singleRow || position < COLUMNS)) {
             // Dock: park it at the bottom of the screen and show the top shelf for this app. In a single row
             // every tile is in the dock's row, which never scrolls vertically.
@@ -1770,6 +1816,28 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         int h = (int) (card.getHeight() * scale + 2 * pad);
         if (!glassShown || card.getWidth() != glassCardW || glass.getWidth() != w || glass.getHeight() != h) {
             onTileFocused(pos, card);
+        } else {
+            updateSelectedAppInfo(pos);
+        }
+    }
+
+    /** Updates the selected application title and recently opened info displayed right above the first row. */
+    private void updateSelectedAppInfo(int position) {
+        if (selectedAppName == null || adapter == null || position < 0 || position >= adapter.appCount()) return;
+        String label = adapter.labelAt(position);
+        if (label != null) {
+            selectedAppName.setText(label);
+        }
+        if (selectedAppMeta != null) {
+            String pkg = adapter.packageAt(position);
+            long when = LastOpened.get(this, pkg);
+            if (when > 0) {
+                String rel = LastOpened.describe(this, when);
+                selectedAppMeta.setText("• " + getString(R.string.last_opened, rel));
+                selectedAppMeta.setVisibility(View.VISIBLE);
+            } else {
+                selectedAppMeta.setVisibility(View.GONE);
+            }
         }
     }
 

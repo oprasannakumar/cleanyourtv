@@ -24,7 +24,24 @@ final class LastOpened {
 
     /** Milliseconds since the epoch, or 0 when Home never opened the app. */
     static long get(Context ctx, String pkg) {
-        return pkg == null ? 0L : prefs(ctx).getLong(pkg, 0L);
+        if (pkg == null) return 0L;
+        long recorded = prefs(ctx).getLong(pkg, 0L);
+        if (recorded > 0L) return recorded;
+        try {
+            android.app.usage.UsageStatsManager usm = (android.app.usage.UsageStatsManager) ctx.getSystemService(Context.USAGE_STATS_SERVICE);
+            if (usm != null) {
+                long now = System.currentTimeMillis();
+                java.util.Map<String, android.app.usage.UsageStats> map = usm.queryAndAggregateUsageStats(now - 30L * 86400000L, now);
+                if (map != null && map.containsKey(pkg)) {
+                    android.app.usage.UsageStats u = map.get(pkg);
+                    if (u != null && u.getLastTimeUsed() > 0L) {
+                        return u.getLastTimeUsed();
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        return 0L;
     }
 
     /**

@@ -142,6 +142,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private WallpaperPlayer wallpaperPlayer;
     private GlassView glass;
     private View ambient;
+    private TextView selectedAppName;
+    private TextView selectedAppMeta;
     private TextView heroName;
     /** The top shelf: heroName, plus the cinematic shelf's "Last opened" line and dock position dots. */
     private View hero;
@@ -474,6 +476,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ambientGlow = cfg.ambientGlow;
         appGlow = cfg.appGlow;
         if (!ambientGlow) ambient.setVisibility(View.GONE);
+        selectedAppName = findViewById(R.id.selectedAppName);
+        selectedAppMeta = findViewById(R.id.selectedAppMeta);
         heroName = findViewById(R.id.heroName);
         hero = findViewById(R.id.hero);
         // The hero is now a group (name, and the cinematic lines): without this every fade of the default
@@ -1775,6 +1779,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springY.animateToFinalPosition(y - glassScrollShift);
         }
         View item = (View) card.getParent();
+        updateSelectedAppInfo(position);
         if (dockRow && (singleRow || position < COLUMNS)) {
             // Dock: park it at the bottom of the screen and show the top shelf for this app. In a single row
             // every tile is in the dock's row, which never scrolls vertically.
@@ -1811,6 +1816,28 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         int h = (int) (card.getHeight() * scale + 2 * pad);
         if (!glassShown || card.getWidth() != glassCardW || glass.getWidth() != w || glass.getHeight() != h) {
             onTileFocused(pos, card);
+        } else {
+            updateSelectedAppInfo(pos);
+        }
+    }
+
+    /** Updates the selected application title and recently opened info displayed right above the first row. */
+    private void updateSelectedAppInfo(int position) {
+        if (selectedAppName == null || adapter == null || position < 0 || position >= adapter.appCount()) return;
+        String label = adapter.labelAt(position);
+        if (label != null) {
+            selectedAppName.setText(label);
+        }
+        if (selectedAppMeta != null) {
+            String pkg = adapter.packageAt(position);
+            long when = LastOpened.get(this, pkg);
+            if (when > 0) {
+                String rel = LastOpened.describe(this, when);
+                selectedAppMeta.setText("• " + getString(R.string.last_opened, rel));
+                selectedAppMeta.setVisibility(View.VISIBLE);
+            } else {
+                selectedAppMeta.setVisibility(View.GONE);
+            }
         }
     }
 

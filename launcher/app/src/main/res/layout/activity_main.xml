@@ -486,6 +486,40 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <!-- Selected App Name & Recently Opened Info on top of the first row -->
+        <LinearLayout
+            android:id="@+id/selectedAppInfoRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/selectedAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFFFF"
+                android:textSize="26sp"
+                android:fontFamily="@string/font_medium"
+                android:letterSpacing="-0.01"
+                android:singleLine="true"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/selectedAppMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="@string/font_regular"
+                android:singleLine="true"
+                android:includeFontPadding="false" />
+        </LinearLayout>
+
         <!-- The wrapper clips at the grid's edge; the grid itself must not clip so scaled tiles can overflow their cells. -->
         <FrameLayout
             android:id="@+id/gridWrapper"
@@ -493,7 +527,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="true"
             android:clipToPadding="true"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="4dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/grid"

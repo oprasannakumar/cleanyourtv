@@ -424,8 +424,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignBottom="@id/leftBlock"
-                android:layout_marginBottom="6dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="8dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal">
@@ -463,6 +463,13 @@
                     android:nextFocusDown="@+id/grid" />
 
                 <TextView
+                    android:id="@+id/btnSync"
+                    style="@style/TopButtonIcon"
+                    android:contentDescription="Sync Calendar &amp; Panchangam"
+                    android:drawableStart="@drawable/ic_sync"
+                    android:nextFocusDown="@+id/grid" />
+
+                <TextView
                     android:id="@+id/btnLibraryTop"
                     style="@style/TopButtonIcon"
                     android:visibility="gone"
@@ -479,23 +486,59 @@
             </LinearLayout>
         </RelativeLayout>
 
+        <!-- Selected App Name & Recently Opened Info on top of the first row -->
+        <LinearLayout
+            android:id="@+id/selectedAppInfoRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/selectedAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFFFF"
+                android:textSize="26sp"
+                android:fontFamily="@string/font_medium"
+                android:letterSpacing="-0.01"
+                android:singleLine="true"
+                android:includeFontPadding="false" />
+
+            <TextView
+                android:id="@+id/selectedAppMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:textColor="#B3FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="@string/font_regular"
+                android:singleLine="true"
+                android:includeFontPadding="false" />
+        </LinearLayout>
+
         <!-- The wrapper clips at the grid's edge; the grid itself must not clip so scaled tiles can overflow their cells. -->
         <FrameLayout
+            android:id="@+id/gridWrapper"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            android:layout_marginTop="4dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/grid"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="10dp"
-                android:paddingBottom="40dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="12dp"
+                android:paddingBottom="0dp"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:clipToPadding="false"
-                android:clipChildren="false"
+                android:clipToPadding="true"
+                android:clipChildren="true"
                 android:overScrollMode="never"
                 android:scrollbars="none"
                 android:descendantFocusability="afterDescendants" />
