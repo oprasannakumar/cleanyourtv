@@ -90,6 +90,9 @@ final class CalendarSync {
             List<JSONObject> allEvents = new ArrayList<>();
             Set<String> seen = new HashSet<>();
 
+            // 0. Pre-seed with existing birthday database so base birthdays are never overwritten
+            loadBaseEvents(context, allEvents, seen);
+
             // 1. Try Google Calendar OAuth API (fetches Google Contacts birthdays + holidays)
             String authJsonStr = readAuthJson(context);
             if (!TextUtils.isEmpty(authJsonStr)) {
@@ -202,6 +205,35 @@ final class CalendarSync {
         }
     }
 
+    private static void loadBaseEvents(Context context, List<JSONObject> allEvents, Set<String> seen) {
+        String json = null;
+        File internal = new File(context.getFilesDir(), "calendar_events.json");
+        if (internal.exists() && internal.length() > 0) {
+            try (InputStream in = new java.io.FileInputStream(internal)) {
+                json = readStream(in);
+            } catch (Exception ignored) {}
+        }
+        if (TextUtils.isEmpty(json)) {
+            try (InputStream in = context.getAssets().open("calendar_events.json")) {
+                json = readStream(in);
+            } catch (Exception ignored) {}
+        }
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONArray arr = new JSONArray(json);
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    String title = obj.optString("title", "");
+                    String date = obj.optString("date", "");
+                    String key = (date.length() >= 5 ? date.substring(5) : date) + "_" + title.toLowerCase(Locale.ROOT).trim();
+                    if (seen.add(key)) {
+                        allEvents.add(obj);
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
     private static List<JSONObject> fetchIcalEvents(String urlStr, LocalDate today) {
         List<JSONObject> list = new ArrayList<>();
         HttpURLConnection conn = null;
@@ -239,13 +271,15 @@ final class CalendarSync {
                                 try {
                                     LocalDate evDate = LocalDate.parse(date);
                                     if (!evDate.isBefore(today) && !evDate.isAfter(today.plusDays(40))) {
-                                        boolean isBday = summary.toLowerCase(Locale.ROOT).contains("birthday");
-                                        boolean isAnni = summary.toLowerCase(Locale.ROOT).contains("anniversary");
-                                        JSONObject ev = new JSONObject();
-                                        ev.put("title", summary);
-                                        ev.put("date", date);
-                                        ev.put("type", isBday ? "birthday" : (isAnni ? "anniversary" : "event"));
-                                        list.add(ev);
+                                        boolean isBday = summary.toLowerCase(Locale.ROOT).contains("birthday") || summary.toLowerCase(Locale.ROOT).contains("bday");
+                                        boolean isAnni = summary.toLowerCase(Locale.ROOT).contains("anniversary") || summary.toLowerCase(Locale.ROOT).contains("marriage");
+                                        if (isBday || isAnni) {
+                                            JSONObject ev = new JSONObject();
+                                            ev.put("title", summary);
+                                            ev.put("date", date);
+                                            ev.put("type", isBday ? "birthday" : "anniversary");
+                                            list.add(ev);
+                                        }
                                     }
                                 } catch (Exception ignored) {}
                             }
