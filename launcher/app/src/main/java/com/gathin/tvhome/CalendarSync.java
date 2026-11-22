@@ -163,6 +163,22 @@ final class CalendarSync {
                 return false;
             }
 
+            boolean hasBdays = false;
+            for (JSONObject ev : allEvents) {
+                String t = ev.optString("type", "");
+                String s = ev.optString("title", "");
+                if ("birthday".equalsIgnoreCase(t) || "anniversary".equalsIgnoreCase(t)
+                        || s.toLowerCase().contains("birthday") || s.toLowerCase().contains("anniversary")
+                        || s.toLowerCase().contains("marriage")) {
+                    hasBdays = true;
+                    break;
+                }
+            }
+            if (!hasBdays) {
+                Log.w(TAG, "Sync returned no birthdays; preserving existing birthday database.");
+                return false;
+            }
+
             // Sort all by date
             Collections.sort(allEvents, (a, b) -> a.optString("date", "").compareTo(b.optString("date", "")));
 

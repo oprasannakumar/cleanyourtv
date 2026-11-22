@@ -162,15 +162,31 @@ final class CalendarTicker {
                 if (!TextUtils.isEmpty(dateStr) && !TextUtils.isEmpty(title)) {
                     try {
                         LocalDate d = LocalDate.parse(dateStr);
-                        long days = ChronoUnit.DAYS.between(today, d);
-                        // Upcoming events (top 5 upcoming birthdays/anniversaries)
                         boolean isBdayOrAnni = "birthday".equalsIgnoreCase(type) ||
                                 "anniversary".equalsIgnoreCase(type) ||
                                 title.toLowerCase().contains("birthday") ||
-                                title.toLowerCase().contains("anniversary");
+                                title.toLowerCase().contains("anniversary") ||
+                                title.toLowerCase().contains("marriage") ||
+                                title.toLowerCase().contains("engaged") ||
+                                title.toLowerCase().contains("bday");
 
+                        LocalDate nextOccurrence = d;
+                        if (isBdayOrAnni) {
+                            try {
+                                LocalDate thisYear = LocalDate.of(today.getYear(), d.getMonthValue(), d.getDayOfMonth());
+                                if (!thisYear.isBefore(today)) {
+                                    nextOccurrence = thisYear;
+                                } else {
+                                    nextOccurrence = LocalDate.of(today.getYear() + 1, d.getMonthValue(), d.getDayOfMonth());
+                                }
+                            } catch (Exception leapYearFallback) {
+                                nextOccurrence = LocalDate.of(today.getYear(), d.getMonthValue(), 28);
+                            }
+                        }
+
+                        long days = ChronoUnit.DAYS.between(today, nextOccurrence);
                         if (isBdayOrAnni && days >= 0 && days <= 60) {
-                            EventItem item = new EventItem(title, d, type);
+                            EventItem item = new EventItem(title, nextOccurrence, type);
                             item.daysAway = days;
                             events.add(item);
                         }
@@ -197,14 +213,14 @@ final class CalendarTicker {
         EventItem item = events.get(currentIndex);
 
         String icon;
-        if ("birthday".equalsIgnoreCase(item.type)) {
-            icon = "🎂 ";
+        if ("birthday".equalsIgnoreCase(item.type) || item.title.toLowerCase().contains("birthday") || item.title.toLowerCase().contains("bday")) {
+            icon = "\uD83C\uDF82 "; // 🎂
         } else if ("festival".equalsIgnoreCase(item.type)) {
-            icon = "🪔 ";
-        } else if ("anniversary".equalsIgnoreCase(item.type)) {
-            icon = "💍 ";
+            icon = "\uD83E\uDE94 "; // 🪔
+        } else if ("anniversary".equalsIgnoreCase(item.type) || item.title.toLowerCase().contains("anniversary") || item.title.toLowerCase().contains("marriage")) {
+            icon = "\uD83D\uDC8D "; // 💍
         } else {
-            icon = "📅 ";
+            icon = "\uD83D\uDCC5 "; // 📅
         }
 
         String when;
@@ -222,19 +238,23 @@ final class CalendarTicker {
     }
 
     private String readJsonString() {
-        // 1. Try internal synced storage
+        // 1. Try internal synced storage, but only if it contains valid birthday events
         File internal = new File(context.getFilesDir(), "calendar_events.json");
         if (internal.exists() && internal.length() > 0) {
             try (InputStream in = new FileInputStream(internal)) {
-                return readStream(in);
+                String content = readStream(in);
+                if (hasValidBirthdays(content)) return content;
             } catch (Exception ignored) {}
+            // Stale or corrupted file without birthdays: delete it
+            try { internal.delete(); } catch (Exception ignored) {}
         }
 
         // 2. Try external app storage
         File external = new File(context.getExternalFilesDir(null), "calendar_events.json");
         if (external.exists() && external.length() > 0) {
             try (InputStream in = new FileInputStream(external)) {
-                return readStream(in);
+                String content = readStream(in);
+                if (hasValidBirthdays(content)) return content;
             } catch (Exception ignored) {}
         }
 
@@ -246,6 +266,24 @@ final class CalendarTicker {
         }
 
         return null;
+    }
+
+    private static boolean hasValidBirthdays(String json) {
+        if (TextUtils.isEmpty(json)) return false;
+        try {
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String t = obj.optString("type", "");
+                String title = obj.optString("title", "");
+                if ("birthday".equalsIgnoreCase(t) || "anniversary".equalsIgnoreCase(t)
+                        || title.toLowerCase().contains("birthday") || title.toLowerCase().contains("anniversary")
+                        || title.toLowerCase().contains("marriage") || title.toLowerCase().contains("bday")) {
+                    return true;
+                }
+            }
+        } catch (Exception ignored) {}
+        return false;
     }
 
     private static String readStream(InputStream in) throws Exception {

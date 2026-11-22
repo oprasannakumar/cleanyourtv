@@ -1,152 +1,1007 @@
 [
   {
-    "title": "Bharat's birthday",
-    "date": "2026-10-28",
-    "type": "birthday",
-    "days_away": 1
+    "title": "Doli (D/o. Srinadh Uncle)'s birthday",
+    "date": "2027-01-04",
+    "type": "birthday"
   },
   {
-    "title": "Karaka Chaturthi",
-    "date": "2026-10-29",
-    "type": "festival",
-    "days_away": 2
+    "title": "Kalyani Siri's birthday",
+    "date": "2027-01-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Kusuma's birthday",
+    "date": "2027-01-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Trinadh (E. C. E)'s birthday",
+    "date": "2027-01-19",
+    "type": "birthday"
+  },
+  {
+    "title": "Sreeja (ECE)'s birthday",
+    "date": "2027-01-20",
+    "type": "birthday"
+  },
+  {
+    "title": "Srikanth sir's marriage day",
+    "date": "2027-01-22",
+    "type": "anniversary"
+  },
+  {
+    "title": "Gayatri Teju's Sister's birthday",
+    "date": "2027-01-29",
+    "type": "birthday"
+  },
+  {
+    "title": "Charan bro's birthday",
+    "date": "2027-01-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Anurag Chv(sandy Friend)'s birthday",
+    "date": "2027-02-01",
+    "type": "birthday"
+  },
+  {
+    "title": "Sowjanya(E C. E)'s birthday",
+    "date": "2027-02-01",
+    "type": "birthday"
+  },
+  {
+    "title": "Vasavi(♥️)'s anniversary",
+    "date": "2027-02-06",
+    "type": "birthday"
+  },
+  {
+    "title": "Wedding Day: Kalyani Siri",
+    "date": "2027-02-10",
+    "type": "birthday"
+  },
+  {
+    "title": "Kusuma's anniversary",
+    "date": "2027-02-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Teja Simhachalam(E. C. E)'s birthday",
+    "date": "2027-02-12",
+    "type": "birthday"
+  },
+  {
+    "title": "Surya Bammardhi's birthday",
+    "date": "2027-02-16",
+    "type": "birthday"
+  },
+  {
+    "title": "P. SAI KUMAR (E. C. E)'s birthday",
+    "date": "2027-02-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Brother In Law's birthday",
+    "date": "2027-02-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Siva Gopi Nadh (E. C. E)'s birthday",
+    "date": "2027-02-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Puneeth (E. C. E)'s anniversary",
+    "date": "2027-03-02",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Sri Harsha's anniversary",
+    "date": "2027-03-02",
+    "type": "birthday"
+  },
+  {
+    "title": "Jevan Raj (E. C. E)'s anniversary",
+    "date": "2027-03-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Bb's birthday",
+    "date": "2027-03-06",
+    "type": "birthday"
+  },
+  {
+    "title": "Jahnavi Chelli's birthday",
+    "date": "2027-03-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Varee Eshwar's birthday",
+    "date": "2027-03-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Tejaswi Teju's birthday",
+    "date": "2027-03-10",
+    "type": "birthday"
+  },
+  {
+    "title": "Mother's birthday",
+    "date": "2027-03-16",
+    "type": "birthday"
+  },
+  {
+    "title": "Anjaneyulu babai garu's anniversary",
+    "date": "2027-03-19",
+    "type": "birthday"
+  },
+  {
+    "title": "Ramya (E. C. E)'s birthday",
+    "date": "2027-03-20",
+    "type": "birthday"
+  },
+  {
+    "title": "M.Rajashekar (E.C.E)'s birthday",
+    "date": "2027-03-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Yasaswini(ECE)'s birthday",
+    "date": "2027-03-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Siva Ranga Rao's birthday",
+    "date": "2027-03-25",
+    "type": "birthday"
+  },
+  {
+    "title": "Ravi Teja Vadakattu's birthday",
+    "date": "2027-03-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Sharief Sir's birthday",
+    "date": "2027-03-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Nagendra(ECE)'s birthday",
+    "date": "2027-03-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Hitha Sri Batchu(ECE)'s birthday",
+    "date": "2027-03-29",
+    "type": "birthday"
+  },
+  {
+    "title": "Bharath Thammudu(MECH)'s birthday",
+    "date": "2027-03-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Fareed (E. C. E)'s birthday",
+    "date": "2027-04-02",
+    "type": "birthday"
+  },
+  {
+    "title": "Rajesh anna pg's birthday",
+    "date": "2027-04-02",
+    "type": "birthday"
+  },
+  {
+    "title": "Sandeep Chinta's birthday",
+    "date": "2027-04-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Ayansh B'day: Akshitha",
+    "date": "2027-04-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Marriage Day: Siva Nagamani",
+    "date": "2027-04-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Puja bhavani ECE's anniversary",
+    "date": "2027-04-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Uday Seeta POLYTECHNIC college's anniversary",
+    "date": "2027-04-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Krishna, (ECE)'s birthday",
+    "date": "2027-04-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Koti Govt Polytechnic College's birthday",
+    "date": "2027-04-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Satish Naidu(ECE)'s birthday",
+    "date": "2027-04-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Ch. Mani Kanta (E. C. E)'s birthday",
+    "date": "2027-04-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Gayatri(ECE)'s birthday",
+    "date": "2027-05-01",
+    "type": "birthday"
+  },
+  {
+    "title": "Pujitha's birthday",
+    "date": "2027-05-01",
+    "type": "birthday"
+  },
+  {
+    "title": "Jaya Surya's birthday",
+    "date": "2027-05-03",
+    "type": "birthday"
+  },
+  {
+    "title": "Rasvitha's birthday",
+    "date": "2027-05-03",
+    "type": "birthday"
+  },
+  {
+    "title": "Suchitra(E C. E)'s birthday",
+    "date": "2027-05-08",
+    "type": "birthday"
+  },
+  {
+    "title": "Sreekar (E. C. E)'s birthday",
+    "date": "2027-05-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Mallesh's birthday",
+    "date": "2027-05-15",
+    "type": "birthday"
+  },
+  {
+    "title": "Manasa (E. C. E)'s birthday",
+    "date": "2027-05-17",
+    "type": "birthday"
+  },
+  {
+    "title": "Sundhar Mech's birthday",
+    "date": "2027-05-17",
+    "type": "birthday"
+  },
+  {
+    "title": "Pranav Harsha Bro's birthday",
+    "date": "2027-05-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Ujwala(ECE)'s birthday",
+    "date": "2027-05-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Jitendra Gupta's birthday",
+    "date": "2027-05-19",
+    "type": "birthday"
+  },
+  {
+    "title": "Mani Kanta AC H School's birthday",
+    "date": "2027-05-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Chinni Lakshmi Priya (Ammulu)'s anniversary",
+    "date": "2027-05-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Hema Latha Veerisetty's anniversary",
+    "date": "2027-05-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Surendra (E. C. E)'s anniversary",
+    "date": "2027-05-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Siva Gopi Krishna (E. C. E)'s birthday",
+    "date": "2027-05-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Mounika Sunkara's birthday",
+    "date": "2027-05-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Amanulla Aman (E. C. E)'s birthday",
+    "date": "2027-05-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Pagidipalli Suresh's birthday",
+    "date": "2027-05-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Purna Sai's birthday",
+    "date": "2027-05-28",
+    "type": "birthday"
+  },
+  {
+    "title": "MADAVI AKKA's anniversary",
+    "date": "2027-06-03",
+    "type": "birthday"
+  },
+  {
+    "title": "Y Aravind's birthday",
+    "date": "2027-06-03",
+    "type": "birthday"
+  },
+  {
+    "title": "Ajay ece's birthday",
+    "date": "2027-06-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Kashu: Bb",
+    "date": "2027-06-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Pavi Akka's birthday",
+    "date": "2027-06-08",
+    "type": "birthday"
+  },
+  {
+    "title": "Nikhita's birthday",
+    "date": "2027-06-14",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Karthik's birthday",
+    "date": "2027-06-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Raghuram's anniversary",
+    "date": "2027-06-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Sreeja (ECE)'s anniversary",
+    "date": "2027-06-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Nagireddy (Akki Husband)'s birthday",
+    "date": "2027-06-25",
+    "type": "birthday"
+  },
+  {
+    "title": "Raghuram's birthday",
+    "date": "2027-06-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Lohit's birthday",
+    "date": "2027-07-10",
+    "type": "birthday"
+  },
+  {
+    "title": "Child Bday: Sai Sri Harsha",
+    "date": "2027-07-12",
+    "type": "birthday"
+  },
+  {
+    "title": "Saikumar Thota's birthday",
+    "date": "2027-07-14",
+    "type": "birthday"
+  },
+  {
+    "title": "Sazid (ECE) PSCMR's birthday",
+    "date": "2027-07-19",
+    "type": "birthday"
+  },
+  {
+    "title": "Wasim's birthday",
+    "date": "2027-07-21",
+    "type": "birthday"
+  },
+  {
+    "title": "Harika Sister's birthday",
+    "date": "2027-07-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Ranjitha's birthday",
+    "date": "2027-07-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Renukaram (EEE)'s birthday",
+    "date": "2027-07-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Meghana Vankayala's birthday",
+    "date": "2027-07-26",
+    "type": "birthday"
+  },
+  {
+    "title": "Voshma's birthday",
+    "date": "2027-07-26",
+    "type": "birthday"
+  },
+  {
+    "title": "G.SATISH KUMAR's birthday",
+    "date": "2027-07-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Bharat (E.C.E)'s birthday",
+    "date": "2027-07-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Prudhvi Raj (teju Bava)'s birthday",
+    "date": "2027-08-02",
+    "type": "birthday"
+  },
+  {
+    "title": "Anil(ECE)'s birthday",
+    "date": "2027-08-04",
+    "type": "birthday"
+  },
+  {
+    "title": "J HEMANTH's anniversary",
+    "date": "2027-08-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Venkatesh's birthday",
+    "date": "2027-08-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Sanjeeva Kumar's birthday",
+    "date": "2027-08-06",
+    "type": "birthday"
+  },
+  {
+    "title": "Siva Egilisetty's birthday",
+    "date": "2027-08-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Adhi (E.C.E)'s birthday",
+    "date": "2027-08-09",
+    "type": "birthday"
+  },
+  {
+    "title": "B Kiranmai's birthday",
+    "date": "2027-08-09",
+    "type": "birthday"
+  },
+  {
+    "title": "Ch adhi ece's birthday",
+    "date": "2027-08-09",
+    "type": "birthday"
+  },
+  {
+    "title": "Srinivas, (E.C.E)'s birthday",
+    "date": "2027-08-10",
+    "type": "birthday"
+  },
+  {
+    "title": "Vks prakash (ECE)'s birthday",
+    "date": "2027-08-10",
+    "type": "birthday"
+  },
+  {
+    "title": "Eswar Datta's birthday",
+    "date": "2027-08-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Father Bday: Sai Sri Harsha",
+    "date": "2027-08-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Happy birthday!",
+    "date": "2027-08-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Nikhil Pulivarthi's birthday",
+    "date": "2027-08-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Sriram Yanduru's birthday",
+    "date": "2027-08-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Samson (E. C. E)'s birthday",
+    "date": "2027-08-14",
+    "type": "birthday"
+  },
+  {
+    "title": "Sykam Sravani (E. C. E)'s birthday",
+    "date": "2027-08-14",
+    "type": "birthday"
+  },
+  {
+    "title": "J D V Sai Nadh's birthday",
+    "date": "2027-08-15",
+    "type": "birthday"
+  },
+  {
+    "title": "Kiranmai DLV (E. C. E)'s birthday",
+    "date": "2027-08-15",
+    "type": "birthday"
+  },
+  {
+    "title": "Pavan Sai Kumar (E. C. E)'s birthday",
+    "date": "2027-08-16",
+    "type": "birthday"
+  },
+  {
+    "title": "Chinna Mahendrababu's birthday",
+    "date": "2027-08-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Jevan Raj (E. C. E)'s birthday",
+    "date": "2027-08-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Vasavi(♥️)'s birthday",
+    "date": "2027-08-19",
+    "type": "birthday"
+  },
+  {
+    "title": "Divya's birthday",
+    "date": "2027-08-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Kiran Raja's anniversary",
+    "date": "2027-08-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Nikhita's anniversary",
+    "date": "2027-08-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Prasad (ECE)'s birthday",
+    "date": "2027-08-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Harini (E. C. E)'s birthday",
+    "date": "2027-08-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Sowjanya(E C. E)'s anniversary",
+    "date": "2027-08-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Hema Latha Veerisetty's birthday",
+    "date": "2027-08-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Sandeep Chinta's anniversary",
+    "date": "2027-08-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Sekhar Kumar's birthday",
+    "date": "2027-08-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Srujana(E CE)'s birthday",
+    "date": "2027-08-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Poojitha(ECE-B)'s birthday",
+    "date": "2027-08-29",
+    "type": "birthday"
+  },
+  {
+    "title": "Akshitha's anniversary",
+    "date": "2027-08-30",
+    "type": "birthday"
+  },
+  {
+    "title": "Harshitha sister's birthday",
+    "date": "2027-08-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Sravan EEE's birthday",
+    "date": "2027-08-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Y MANI KUMAR's birthday",
+    "date": "2027-08-31",
+    "type": "birthday"
+  },
+  {
+    "title": "Aashritha's birthday",
+    "date": "2027-09-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Nadh Le's birthday",
+    "date": "2027-09-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Akshitha's birthday",
+    "date": "2027-09-06",
+    "type": "birthday"
+  },
+  {
+    "title": "Jagadish Chowdary Meka's birthday",
+    "date": "2027-09-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Hema Jio's birthday",
+    "date": "2027-09-09",
+    "type": "birthday"
+  },
+  {
+    "title": "Nagaraju Pest Control's birthday",
+    "date": "2027-09-15",
+    "type": "birthday"
+  },
+  {
+    "title": "Krithika: Bb",
+    "date": "2027-09-17",
+    "type": "birthday"
+  },
+  {
+    "title": "Rajeswari's birthday",
+    "date": "2027-09-18",
+    "type": "birthday"
+  },
+  {
+    "title": "G.HARSHA VARDHAN's birthday",
+    "date": "2027-09-20",
+    "type": "birthday"
+  },
+  {
+    "title": "Hanisha(ECE)'s birthday",
+    "date": "2027-09-20",
+    "type": "birthday"
+  },
+  {
+    "title": "Sita(ECE)'s birthday",
+    "date": "2027-09-20",
+    "type": "birthday"
+  },
+  {
+    "title": "K. Venky(E. C. E)'s birthday",
+    "date": "2027-09-21",
+    "type": "birthday"
+  },
+  {
+    "title": "Padmini's birthday",
+    "date": "2027-09-21",
+    "type": "birthday"
+  },
+  {
+    "title": "Vamsi Krishna Ssc's birthday",
+    "date": "2027-09-21",
+    "type": "birthday"
+  },
+  {
+    "title": "Akhil bava maridhi's birthday",
+    "date": "2027-09-27",
+    "type": "birthday"
+  },
+  {
+    "title": "Mani Kanta (Sandy Bro)'s birthday",
+    "date": "2027-09-29",
+    "type": "birthday"
+  },
+  {
+    "title": "RAVI BABAI's birthday",
+    "date": "2027-09-30",
+    "type": "birthday"
+  },
+  {
+    "title": "Maruthi (ECE)'s birthday",
+    "date": "2027-10-01",
+    "type": "birthday"
+  },
+  {
+    "title": "Narasimha Swami's birthday",
+    "date": "2027-10-03",
+    "type": "birthday"
+  },
+  {
+    "title": "Baby Bday: Puneeth (E. C. E)",
+    "date": "2027-10-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Darshika Bday: J D V Sai Nadh",
+    "date": "2027-10-05",
+    "type": "birthday"
+  },
+  {
+    "title": "Gopalreddy (E. C. E)'s birthday",
+    "date": "2027-10-07",
+    "type": "birthday"
+  },
+  {
+    "title": "Sai Sri Harsha's birthday",
+    "date": "2027-10-08",
+    "type": "birthday"
+  },
+  {
+    "title": "diya bday: Kalyani Siri",
+    "date": "2027-10-08",
+    "type": "birthday"
+  },
+  {
+    "title": "Harsha Gangavarapu's birthday",
+    "date": "2027-10-09",
+    "type": "birthday"
+  },
+  {
+    "title": "Mavayya garu's anniversary",
+    "date": "2027-10-11",
+    "type": "birthday"
+  },
+  {
+    "title": "anand(ECE)'s birthday",
+    "date": "2027-10-11",
+    "type": "birthday"
+  },
+  {
+    "title": "Ananthapalli Mavayya Garu's anniversary",
+    "date": "2027-10-13",
+    "type": "birthday"
+  },
+  {
+    "title": "Vardhan (ECE)'s birthday",
+    "date": "2027-10-13",
+    "type": "birthday"
+  },
+  {
+    "title": "Jaya Lakshmi (ECE)'s birthday",
+    "date": "2027-10-15",
+    "type": "birthday"
+  },
+  {
+    "title": "K. Vijay (E. C. E)'s birthday",
+    "date": "2027-10-16",
+    "type": "birthday"
+  },
+  {
+    "title": "Sivavnagamani(ECE)'s birthday",
+    "date": "2027-10-18",
+    "type": "birthday"
+  },
+  {
+    "title": "Gouse Mohammadh's birthday",
+    "date": "2027-10-20",
+    "type": "birthday"
+  },
+  {
+    "title": "Mother And Sister Bday: Meghana Vankayala",
+    "date": "2027-10-20",
+    "type": "birthday"
+  },
+  {
+    "title": "A Mani Kumar's birthday",
+    "date": "2027-10-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Allari Teja's birthday",
+    "date": "2027-10-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Uday Seeta POLYTECHNIC college's birthday",
+    "date": "2027-10-22",
+    "type": "birthday"
+  },
+  {
+    "title": "Maheswari Chelli's birthday",
+    "date": "2027-10-25",
+    "type": "birthday"
+  },
+  {
+    "title": "Ramanaiah Vja's birthday",
+    "date": "2027-10-25",
+    "type": "birthday"
+  },
+  {
+    "title": "Bharat's birthday",
+    "date": "2027-10-28",
+    "type": "birthday"
+  },
+  {
+    "title": "Mavayya garu's birthday",
+    "date": "2027-10-28",
+    "type": "birthday"
   },
   {
     "title": "(E.C.E) Shiva's birthday",
-    "date": "2026-11-01",
-    "type": "birthday",
-    "days_away": 5
+    "date": "2027-11-01",
+    "type": "birthday"
   },
   {
     "title": "Ekshitha's birthday",
-    "date": "2026-11-01",
-    "type": "birthday",
-    "days_away": 5
+    "date": "2027-11-01",
+    "type": "birthday"
   },
   {
     "title": "Mohan Swaroop Sir's birthday",
-    "date": "2026-11-04",
-    "type": "birthday",
-    "days_away": 8
+    "date": "2027-11-04",
+    "type": "birthday"
   },
   {
     "title": "Sushma(ECE)'s birthday",
-    "date": "2026-11-04",
-    "type": "birthday",
-    "days_away": 8
+    "date": "2027-11-04",
+    "type": "birthday"
   },
   {
     "title": "Teja Santosh (senior)'s birthday",
-    "date": "2026-11-04",
-    "type": "birthday",
-    "days_away": 8
+    "date": "2027-11-04",
+    "type": "birthday"
   },
   {
     "title": "Koppera narendhra's birthday",
-    "date": "2026-11-05",
-    "type": "birthday",
-    "days_away": 9
+    "date": "2027-11-05",
+    "type": "birthday"
   },
   {
     "title": "Lavanya's birthday",
-    "date": "2026-11-05",
-    "type": "birthday",
-    "days_away": 9
-  },
-  {
-    "title": "Diwali/Deepavali",
-    "date": "2026-11-08",
-    "type": "festival",
-    "days_away": 12
-  },
-  {
-    "title": "Naraka Chaturdasi",
-    "date": "2026-11-08",
-    "type": "festival",
-    "days_away": 12
-  },
-  {
-    "title": "Govardhan Puja",
-    "date": "2026-11-09",
-    "type": "festival",
-    "days_away": 13
-  },
-  {
-    "title": "Bhai Duj",
-    "date": "2026-11-11",
-    "type": "festival",
-    "days_away": 15
+    "date": "2027-11-05",
+    "type": "birthday"
   },
   {
     "title": "J HEMANTH's birthday",
-    "date": "2026-11-12",
-    "type": "birthday",
-    "days_away": 16
+    "date": "2027-11-12",
+    "type": "birthday"
   },
   {
     "title": "B. Venkata krishna (E. C. E)'s birthday",
-    "date": "2026-11-13",
-    "type": "birthday",
-    "days_away": 17
+    "date": "2027-11-13",
+    "type": "birthday"
   },
   {
     "title": "Teja (E. C. E)'s birthday",
-    "date": "2026-11-14",
-    "type": "birthday",
-    "days_away": 18
-  },
-  {
-    "title": "Chhat Puja (Pratihar Sashthi/Surya Sashthi)",
-    "date": "2026-11-15",
-    "type": "festival",
-    "days_away": 19
+    "date": "2027-11-14",
+    "type": "birthday"
   },
   {
     "title": "Narendra kumar's birthday",
-    "date": "2026-11-17",
-    "type": "birthday",
-    "days_away": 21
+    "date": "2027-11-17",
+    "type": "birthday"
   },
   {
     "title": "Puneeth (E. C. E)'s birthday",
-    "date": "2026-11-18",
-    "type": "birthday",
-    "days_away": 22
+    "date": "2027-11-18",
+    "type": "birthday"
   },
   {
     "title": "Sowji Akka's birthday",
-    "date": "2026-11-18",
-    "type": "birthday",
-    "days_away": 22
+    "date": "2027-11-18",
+    "type": "birthday"
   },
   {
     "title": "RAVI BABAI's anniversary",
-    "date": "2026-11-19",
-    "type": "birthday",
-    "days_away": 23
+    "date": "2027-11-19",
+    "type": "birthday"
   },
   {
     "title": "Bb's anniversary",
     "date": "2026-11-23",
-    "type": "birthday",
-    "days_away": 27
+    "type": "birthday"
   },
   {
     "title": "G V. Naveen's birthday",
     "date": "2026-11-23",
-    "type": "birthday",
-    "days_away": 27
+    "type": "birthday"
   },
   {
     "title": "Tejaswi Teju's anniversary",
     "date": "2026-11-23",
-    "type": "birthday",
-    "days_away": 27
+    "type": "birthday"
   },
   {
-    "title": "Guru Nanak Jayanti",
-    "date": "2026-11-24",
-    "type": "festival",
-    "days_away": 28
+    "title": "Venkateswarulu (E. C. E)'s birthday",
+    "date": "2026-11-25",
+    "type": "birthday"
+  },
+  {
+    "title": "First visit: Vasavi(♥️)",
+    "date": "2026-11-27",
+    "type": "birthday"
+  },
+  {
+    "title": "J D V Sai Nadh's anniversary",
+    "date": "2026-12-04",
+    "type": "birthday"
+  },
+  {
+    "title": "MADAVI AKKA's birthday",
+    "date": "2026-12-04",
+    "type": "birthday"
+  },
+  {
+    "title": "Jayadeep H/o sowji's birthday",
+    "date": "2026-12-06",
+    "type": "birthday"
+  },
+  {
+    "title": "Kanchana (E. C. E)'s birthday",
+    "date": "2026-12-12",
+    "type": "birthday"
+  },
+  {
+    "title": "Pradeep Sir's birthday",
+    "date": "2026-12-12",
+    "type": "birthday"
+  },
+  {
+    "title": "Engaged: Vasavi(♥️)",
+    "date": "2026-12-14",
+    "type": "birthday"
+  },
+  {
+    "title": "Kiran Raja's birthday",
+    "date": "2026-12-14",
+    "type": "birthday"
+  },
+  {
+    "title": "Uma Mahesh's birthday",
+    "date": "2026-12-15",
+    "type": "birthday"
+  },
+  {
+    "title": "Sarvesh's birthday",
+    "date": "2026-12-23",
+    "type": "birthday"
+  },
+  {
+    "title": "Prakash, (E.C.E)'s birthday",
+    "date": "2026-12-24",
+    "type": "birthday"
+  },
+  {
+    "title": "Chinni Lakshmi Priya (Ammulu)'s birthday",
+    "date": "2026-12-25",
+    "type": "birthday"
   }
 ]
