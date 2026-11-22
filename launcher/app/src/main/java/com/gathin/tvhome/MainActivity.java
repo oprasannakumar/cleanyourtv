@@ -687,7 +687,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             if (singleRow && !cfg.alwaysShowNames) want += (int) (29 * density);
             int wantBottom = MainActivity.this.dockRow ? grid.getPaddingBottom() : 0;
             if (!MainActivity.this.dockRow) {
-                int exact3RowsH = 3 * itemH + want;
+                int naturalTileW = AppAdapter.tileWidthPx(inner, COLUMNS, density);
+                int naturalItemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(naturalTileW), false, density);
+                int exact3RowsH = 3 * naturalItemH + want;
                 View gridWrapper = findViewById(R.id.gridWrapper);
                 if (gridWrapper != null) {
                     ViewGroup.LayoutParams wrapperLp = gridWrapper.getLayoutParams();
